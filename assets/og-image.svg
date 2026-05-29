@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- ============================================================
+       Open Graph card for toise.dev — 1200x630.
+       "old map" palette: cream paper, anthracite ink, terracotta accent.
+       Source of truth; rasterized to og-image.png with rsvg-convert.
+       ============================================================ -->
+  <defs>
+    <style>
+      .ink    { fill: #1a1a1a; }
+      .muted  { fill: #6b6259; }
+      .accent { fill: #b8593d; }
+      .sans   { font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif; }
+    </style>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="630" fill="#faf7f2"/>
+  <!-- top accent rule -->
+  <rect x="0" y="0" width="1200" height="10" class="accent"/>
+
+  <!-- brand lockup: T-mark + wordmark -->
+  <!-- T-mark (the surveyor's mark from the favicon), scaled -->
+  <g class="accent" transform="translate(90,70)">
+    <rect x="0"  y="0"  width="50" height="10" rx="2"/>
+    <rect x="20" y="0"  width="10" height="42" rx="2"/>
+    <rect x="7.5"  y="10" width="4" height="8" rx="1.5"/>
+    <rect x="38.5" y="10" width="4" height="8" rx="1.5"/>
+  </g>
+  <text x="156" y="106" class="sans ink" font-size="42" font-weight="700"
+        letter-spacing="0.5">Toise</text>
+
+  <!-- main tagline -->
+  <text x="90" y="270" class="sans ink" font-size="62" font-weight="800"
+        letter-spacing="-0.5">The living map</text>
+  <text x="90" y="344" class="sans ink" font-size="62" font-weight="800"
+        letter-spacing="-0.5">of your infrastructure.</text>
+
+  <!-- subtagline -->
+  <text x="90" y="420" class="sans muted" font-size="29" font-weight="400">An OpenTelemetry-native graph for network</text>
+  <text x="90" y="460" class="sans muted" font-size="29" font-weight="400">and infrastructure observability.</text>
+
+  <!-- footer ruler motif (a toise: graduated measure) -->
+  <g stroke="#d8cdbc" stroke-width="2">
+    <line x1="90" y1="545" x2="1110" y2="545"/>
+    <line x1="90"   y1="535" x2="90"   y2="555"/>
+    <line x1="260"  y1="539" x2="260"  y2="551"/>
+    <line x1="430"  y1="539" x2="430"  y2="551"/>
+    <line x1="600"  y1="539" x2="600"  y2="551"/>
+    <line x1="770"  y1="539" x2="770"  y2="551"/>
+    <line x1="940"  y1="539" x2="940"  y2="551"/>
+    <line x1="1110" y1="535" x2="1110" y2="555"/>
+  </g>
+
+  <!-- footer text -->
+  <text x="90" y="600" class="sans accent" font-size="26" font-weight="700">toise.dev</text>
+  <text x="1110" y="600" class="sans muted" font-size="24" font-weight="400"
+        text-anchor="end">Open source · Apache 2.0</text>
+</svg>
