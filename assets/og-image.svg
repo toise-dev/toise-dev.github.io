@@ -31,23 +31,28 @@
         letter-spacing="-0.5">of your infrastructure.</text>
 
   <!-- subtagline -->
-  <text x="90" y="420" class="sans muted" font-size="29" font-weight="400">An OpenTelemetry-native infrastructure graph,</text>
-  <text x="90" y="460" class="sans muted" font-size="29" font-weight="400">built to be queried by your AI assistant.</text>
+  <text x="90" y="412" class="sans muted" font-size="29" font-weight="400">An OpenTelemetry-native infrastructure graph,</text>
+  <text x="90" y="452" class="sans muted" font-size="29" font-weight="400">built to be queried by your AI assistant.</text>
+
+  <!-- call-to-action button -->
+  <rect x="90" y="486" width="324" height="58" rx="10" class="accent"/>
+  <text x="252" y="524" class="sans" fill="#faf7f2" font-size="27" font-weight="700"
+        text-anchor="middle" letter-spacing="0.2">Star it on GitHub  &#8594;</text>
 
   <!-- footer ruler motif (a toise: graduated measure) -->
   <g stroke="#d8cdbc" stroke-width="2">
-    <line x1="90" y1="545" x2="1110" y2="545"/>
-    <line x1="90"   y1="535" x2="90"   y2="555"/>
-    <line x1="260"  y1="539" x2="260"  y2="551"/>
-    <line x1="430"  y1="539" x2="430"  y2="551"/>
-    <line x1="600"  y1="539" x2="600"  y2="551"/>
-    <line x1="770"  y1="539" x2="770"  y2="551"/>
-    <line x1="940"  y1="539" x2="940"  y2="551"/>
-    <line x1="1110" y1="535" x2="1110" y2="555"/>
+    <line x1="90" y1="575" x2="1110" y2="575"/>
+    <line x1="90"   y1="565" x2="90"   y2="585"/>
+    <line x1="260"  y1="569" x2="260"  y2="581"/>
+    <line x1="430"  y1="569" x2="430"  y2="581"/>
+    <line x1="600"  y1="569" x2="600"  y2="581"/>
+    <line x1="770"  y1="569" x2="770"  y2="581"/>
+    <line x1="940"  y1="569" x2="940"  y2="581"/>
+    <line x1="1110" y1="565" x2="1110" y2="585"/>
   </g>
 
   <!-- footer text -->
-  <text x="90" y="600" class="sans accent" font-size="26" font-weight="700">toise.dev</text>
-  <text x="1110" y="600" class="sans muted" font-size="24" font-weight="400"
+  <text x="90" y="612" class="sans accent" font-size="26" font-weight="700">toise.dev</text>
+  <text x="1110" y="612" class="sans muted" font-size="24" font-weight="400"
         text-anchor="end">Open source · Apache 2.0</text>
 </svg>
