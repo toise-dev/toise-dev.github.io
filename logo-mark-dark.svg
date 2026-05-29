@@ -1,8 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Toise">
-  <!-- Favicon: simplified Toise mark — bold "T" on a cream tile, resting on a
-       terracotta benchmark point. Kept deliberately simple to read at 16x16. -->
-  <rect width="64" height="64" rx="12" fill="#FAF7F2"/>
-  <g fill="#1A1A1A">
+  <!-- Dark variant: cream mark on an anthracite tile, terracotta benchmark. -->
+  <rect width="64" height="64" rx="12" fill="#1A1A1A"/>
+  <g fill="#FAF7F2">
     <rect x="14" y="16" width="36" height="7" rx="2.5"/>
     <rect x="28.5" y="16" width="7" height="26" rx="2.5"/>
   </g>
