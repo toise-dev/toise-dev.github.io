@@ -1,20 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 64" role="img" aria-label="Toise">
-  <!-- Full lockup: graduated mark (the rod reads as a measuring staff) + wordmark.
-       Transparent background. The wordmark uses the system UI font to match the
-       site and avoid any external font dependency. -->
-  <g>
-    <g fill="#1A1A1A">
-      <rect x="6" y="14" width="40" height="7.5" rx="2.5"/>
-      <rect x="22.25" y="14" width="7.5" height="29" rx="2.5"/>
-    </g>
-    <!-- graduations engraved across the rod -->
-    <g stroke="#FAF7F2" stroke-width="2" stroke-linecap="butt">
-      <line x1="23.75" y1="27" x2="28.25" y2="27"/>
-      <line x1="23.75" y1="33" x2="28.25" y2="33"/>
-      <line x1="23.75" y1="39" x2="28.25" y2="39"/>
-    </g>
-    <circle cx="26" cy="47.5" r="5" fill="#B8593D"/>
-  </g>
-  <text x="64" y="44" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
-        font-size="40" font-weight="700" letter-spacing="0.5" fill="#1A1A1A">Toise</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 188 60" role="img" aria-label="Toise">
+  <!-- Full lockup: two-tone "T" mark (anthracite bar, terracotta stem) +
+       wordmark. Transparent background. The wordmark uses the system UI font
+       to match the site and avoid any external font dependency. -->
+  <rect x="9" y="10" width="46" height="10" rx="3" fill="#1A1A1A"/>
+  <rect x="26" y="10" width="12" height="36" rx="3" fill="#B8593D"/>
+  <text x="66" y="45" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="44" font-weight="700" letter-spacing="0.3" fill="#1A1A1A">Toise</text>
 </svg>
