@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Toise">
+  <!-- cream tile -->
+  <rect width="32" height="32" rx="6" fill="#faf7f2"/>
+  <!-- terracotta "T": a surveyor's mark. The graduations on the crossbar
+       nod to the toise, an old unit of length. -->
+  <g fill="#b8593d">
+    <!-- crossbar -->
+    <rect x="6" y="8" width="20" height="4" rx="1"/>
+    <!-- stem -->
+    <rect x="14" y="8" width="4" height="17" rx="1"/>
+    <!-- graduation ticks hanging under the crossbar -->
+    <rect x="9"  y="12" width="1.6" height="3" rx="0.6"/>
+    <rect x="20.4" y="12" width="1.6" height="3" rx="0.6"/>
+  </g>
+</svg>

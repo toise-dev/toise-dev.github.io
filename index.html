@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Toise — The living map of your infrastructure</title>
+    <meta
+      name="description"
+      content="Toise is an open-source backend that maintains a live, queryable graph of an organization's infrastructure. OpenTelemetry-native, Apache 2.0."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Toise — The living map of your infrastructure" />
+    <meta
+      property="og:description"
+      content="An OpenTelemetry-native graph for network and infrastructure observability. Open source, Apache 2.0."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://toise.dev" />
+    <meta property="og:image" content="https://toise.dev/favicon.svg" />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Toise — The living map of your infrastructure" />
+    <meta
+      name="twitter:description"
+      content="An OpenTelemetry-native graph for network and infrastructure observability. Open source, Apache 2.0."
+    />
+
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;        /* cream / vellum background */
+        --ink: #1a1a1a;       /* anthracite body text */
+        --muted: #6b6259;     /* warm neutral gray, secondary text */
+        --accent: #b8593d;    /* terracotta / ochre accent */
+        --accent-dark: #9c4631; /* hover state for accent */
+        --line: #e6ddd0;      /* hairline borders on the cream */
+      }
+
+      /* ---- Reset / base ---- */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ---- Layout container: centered, 720px max ---- */
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* ---- Header ---- */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 0;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+      }
+
+      nav a {
+        color: var(--muted);
+        margin-left: 24px;
+        font-size: 0.95rem;
+      }
+
+      nav a:hover {
+        color: var(--accent);
+      }
+
+      /* ---- Generous vertical rhythm between sections ---- */
+      section {
+        padding: 56px 0;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 16px;
+      }
+
+      p {
+        margin: 0 0 16px;
+      }
+
+      /* ---- Hero ---- */
+      .hero {
+        text-align: center;
+        padding: 72px 0 56px;
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        line-height: 1.1;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        margin: 0 0 20px;
+      }
+
+      .hero .subtagline {
+        font-size: 1.15rem;
+        color: var(--muted);
+        max-width: 36ch;
+        margin: 0 auto 36px;
+      }
+
+      /* ---- Buttons ---- */
+      .buttons {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 12px 22px;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        border: 1px solid var(--accent);
+        transition: background-color 0.18s ease, color 0.18s ease;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: var(--bg);
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-dark);
+        border-color: var(--accent-dark);
+        text-decoration: none;
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--accent);
+      }
+
+      .btn-secondary:hover {
+        background: var(--accent);
+        color: var(--bg);
+        text-decoration: none;
+      }
+
+      /* ---- "What it does" — three columns, stack under 720px ---- */
+      .cols {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+      }
+
+      .cols h3 {
+        font-size: 1.05rem;
+        margin: 0 0 8px;
+      }
+
+      .cols p {
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin: 0;
+      }
+
+      /* ---- Section divider hairline ---- */
+      .divider {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 0;
+      }
+
+      /* ---- Footer ---- */
+      footer {
+        padding: 40px 0 56px;
+        font-size: 0.9rem;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      footer a {
+        color: var(--muted);
+        margin: 0 10px;
+      }
+
+      footer a:hover {
+        color: var(--accent);
+      }
+
+      footer .copy {
+        margin-bottom: 10px;
+      }
+
+      /* ---- Responsive: stack columns, soften hero on small screens ---- */
+      @media (max-width: 720px) {
+        .cols {
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+
+        .hero h1 {
+          font-size: 2.25rem;
+        }
+
+        .hero {
+          padding: 48px 0 40px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <header>
+        <span class="logo">Toise</span>
+        <nav>
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="https://github.com/toise-dev/toise/tree/main/docs">Docs</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <h1>The living map of your infrastructure.</h1>
+          <p class="subtagline">
+            An OpenTelemetry-native graph for network and infrastructure
+            observability.
+          </p>
+          <div class="buttons">
+            <a class="btn btn-primary" href="https://github.com/toise-dev/toise"
+              >View on GitHub</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/toise-dev/toise/blob/main/docs/roadmap.md"
+              >Read the roadmap</a
+            >
+          </div>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>Why Toise</h2>
+          <p>
+            Modern observability stacks have closed the visibility gap for
+            applications, hosts, containers, and services. The network and the
+            living inventory of how everything connects remain a recurring blind
+            spot. Toise fills it, in the same paradigm.
+          </p>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>What it does</h2>
+          <div class="cols">
+            <div>
+              <h3>Ingests where the truth lives</h3>
+              <p>
+                SNMP, gNMI, vSphere, Active Directory, host agents, cloud APIs.
+                Toise meets your infrastructure where it already speaks, not
+                where it should ideally be.
+              </p>
+            </div>
+            <div>
+              <h3>Maintains a live graph</h3>
+              <p>
+                Entities and relationships update as your infrastructure
+                changes. No weekly CMDB refresh. The map is always current,
+                queryable, and auditable.
+              </p>
+            </div>
+            <div>
+              <h3>Speaks OpenTelemetry</h3>
+              <p>
+                Receivers emit OTLP. Entities follow OpenTelemetry semantic
+                conventions. Plug Toise into the stack you already run.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>Status</h2>
+          <p>
+            Toise is in early development. Core architecture, data model, and
+            first receivers are under active design. Expect breaking changes. We
+            are not yet ready for production use. Follow the project on GitHub or
+            read the roadmap to see where we're heading.
+          </p>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>License &amp; maintainers</h2>
+          <p>
+            Toise is released under the Apache License 2.0. It is initiated and
+            primarily maintained by
+            <a href="https://sensorfactory.fr">Sensor Factory</a>. Contributions
+            from the broader community are welcome.
+          </p>
+        </section>
+      </main>
+
+      <hr class="divider" />
+
+      <footer>
+        <div class="copy">© 2026 Toise contributors. Apache License 2.0.</div>
+        <nav>
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="https://github.com/toise-dev/toise/blob/main/docs/roadmap.md"
+            >Roadmap</a
+          >
+          <a href="https://sensorfactory.fr">Sensor Factory</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
