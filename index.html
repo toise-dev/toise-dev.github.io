@@ -263,8 +263,8 @@
         <section class="hero">
           <h1>The living map of your infrastructure.</h1>
           <p class="subtagline">
-            An OpenTelemetry-native graph for network and infrastructure
-            observability.
+            An OpenTelemetry-native graph of your infrastructure — temporal by
+            design, and built to be queried by your AI assistant.
           </p>
           <div class="buttons">
             <a class="btn btn-primary" href="https://github.com/toise-dev/toise"
@@ -284,9 +284,13 @@
           <h2>Why Toise</h2>
           <p>
             Modern observability stacks have closed the visibility gap for
-            applications, hosts, containers, and services. The network and the
-            living inventory of how everything connects remain a recurring blind
-            spot. Toise fills it, in the same paradigm.
+            applications, hosts, containers, and services. The living inventory
+            of the underlying infrastructure — what exists, how it connects, and
+            how it changes over time — remains a blind spot. Toise fills it: the
+            missing inventory-and-topology brick of the open-source
+            observability stack (OpenTelemetry, VictoriaMetrics, Grafana, Loki,
+            Tempo), designed so an AI assistant can answer an operator's
+            questions about it directly.
           </p>
         </section>
 
@@ -296,26 +300,27 @@
           <h2>What it does</h2>
           <div class="cols">
             <div>
-              <h3>Ingests where the truth lives</h3>
+              <h3>Built for your AI assistant</h3>
               <p>
-                SNMP, gNMI, vSphere, Active Directory, host agents, cloud APIs.
-                Toise meets your infrastructure where it already speaks, not
-                where it should ideally be.
+                Toise ships a native MCP server. Your LLM queries it on your
+                behalf to answer questions about inventory, topology,
+                dependencies, and what changed — in plain language.
               </p>
             </div>
             <div>
-              <h3>Maintains a live graph</h3>
+              <h3>OpenTelemetry-native ingestion</h3>
               <p>
-                Entities and relationships update as your infrastructure
-                changes. No weekly CMDB refresh. The map is always current,
-                queryable, and auditable.
+                Toise ingests OTLP entity events from any OpenTelemetry producer
+                (host and network agents). It runs no collectors of its own; it
+                speaks the standard, not a proprietary protocol.
               </p>
             </div>
             <div>
-              <h3>Speaks OpenTelemetry</h3>
+              <h3>Temporal by construction</h3>
               <p>
-                Receivers emit OTLP. Entities follow OpenTelemetry semantic
-                conventions. Plug Toise into the stack you already run.
+                Event-sourced and bi-temporal. Not just the current state: what
+                changed, why it differs from yesterday, and the full timeline of
+                any entity.
               </p>
             </div>
           </div>
@@ -326,10 +331,10 @@
         <section>
           <h2>Status</h2>
           <p>
-            Toise is in early development. Core architecture, data model, and
-            first receivers are under active design. Expect breaking changes. We
-            are not yet ready for production use. Follow the project on GitHub or
-            read the roadmap to see where we're heading.
+            Toise is in early development. The core architecture, data model,
+            OTLP ingestion, and MCP server are under active design. Expect
+            breaking changes. We are not yet ready for production use. Follow the
+            project on GitHub or read the roadmap to see where we're heading.
           </p>
         </section>
 

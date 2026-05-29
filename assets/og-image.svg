@@ -31,8 +31,8 @@
         letter-spacing="-0.5">of your infrastructure.</text>
 
   <!-- subtagline -->
-  <text x="90" y="420" class="sans muted" font-size="29" font-weight="400">An OpenTelemetry-native graph for network</text>
-  <text x="90" y="460" class="sans muted" font-size="29" font-weight="400">and infrastructure observability.</text>
+  <text x="90" y="420" class="sans muted" font-size="29" font-weight="400">An OpenTelemetry-native infrastructure graph,</text>
+  <text x="90" y="460" class="sans muted" font-size="29" font-weight="400">built to be queried by your AI assistant.</text>
 
   <!-- footer ruler motif (a toise: graduated measure) -->
   <g stroke="#d8cdbc" stroke-width="2">
