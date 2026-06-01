@@ -214,74 +214,122 @@
         width: auto;
       }
 
-      /* ---- Query demo: one "paper" transcript panel, no nested bubbles ---- */
+      /* ---- Query demo: a dark "MCP session" terminal ---- */
+      /* Dark, terminal-specific colors live here on purpose — the cream/ink
+         page palette is deliberately inverted for this one focal artifact. */
       .demo {
         padding-top: 8px;
       }
 
-      .transcript {
+      .terminal {
         margin: 0 auto;
         max-width: 620px;
-        background: #fffdf9;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(26, 26, 26, 0.05);
+        background: #1e1b18;
+        border: 1px solid #322d28;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(26, 26, 26, 0.22);
         overflow: hidden;
+        text-align: left;
       }
 
-      .turn {
-        padding: 18px 24px;
-        border-left: 4px solid #d2c4ad;
+      .term-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 15px;
+        background: #181512;
+        border-bottom: 1px solid #322d28;
       }
 
-      .turn + .turn {
-        border-top: 1px solid var(--line);
+      .term-dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
       }
 
-      .turn p {
-        margin: 0;
-        font-size: 0.98rem;
-        line-height: 1.62;
+      .term-dot:nth-child(1) {
+        background: var(--accent);
       }
 
-      .turn-assistant {
-        border-left-color: var(--accent);
-        background: rgba(184, 89, 61, 0.04);
+      .term-dot:nth-child(2) {
+        background: #7d7268;
       }
 
-      .role {
+      .term-dot:nth-child(3) {
+        background: #4a443d;
+      }
+
+      .term-title {
+        margin-left: 6px;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.78rem;
+        letter-spacing: 0.02em;
+        color: #8c8276;
+      }
+
+      .term-body {
+        padding: 18px 18px 20px;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.9rem;
+        line-height: 1.75;
+        color: #ece4d7;
+      }
+
+      .term-response {
+        margin-top: 0.85em;
+      }
+
+      .term-line {
         display: block;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        margin-bottom: 7px;
       }
 
-      .turn-user .role {
-        color: var(--muted);
+      .term-indent {
+        padding-left: 2.2ch;
       }
 
-      .turn-assistant .role {
+      .term-prompt,
+      .term-marker {
         color: var(--accent);
       }
 
-      .role-via {
-        font-weight: 500;
-        color: var(--muted);
-        text-transform: none;
-        letter-spacing: 0;
+      .term-str {
+        color: #c9b9a4;
       }
 
-      /* Graph entities surfaced from Toise — rendered as data, not prose */
-      .ent {
-        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-        font-size: 0.86em;
-        color: var(--accent-dark);
-        background: rgba(184, 89, 61, 0.07);
-        padding: 0.5px 5px;
-        border-radius: 4px;
+      .term-dim {
+        color: #9b8f7f;
+      }
+
+      .term-ent {
+        color: #e58a5b;
         white-space: nowrap;
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 0.62ch;
+        height: 1.05em;
+        margin-left: 1px;
+        background: var(--accent);
+        vertical-align: -0.18em;
+        animation: term-blink 1.1s steps(1, end) infinite;
+      }
+
+      @keyframes term-blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        50.01%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cursor {
+          animation: none;
+        }
       }
 
       .demo-caption {
@@ -427,33 +475,54 @@
 
         <hr class="divider" />
 
-        <section class="demo" aria-label="Example assistant conversation powered by Toise">
-          <figure class="transcript">
-            <div class="turn turn-user">
-              <span class="role">You</span>
-              <p>
-                Which switches did host <span class="ent">db-07</span> depend on
-                last Tuesday, and what has changed since?
-              </p>
+        <section class="demo" aria-label="Example Toise MCP session">
+          <div class="terminal">
+            <div class="term-bar" aria-hidden="true">
+              <span class="term-dot"></span>
+              <span class="term-dot"></span>
+              <span class="term-dot"></span>
+              <span class="term-title">toise — mcp session</span>
             </div>
-            <div class="turn turn-assistant">
-              <span class="role">Assistant<span class="role-via"> · via Toise MCP</span></span>
-              <p>
-                On <span class="ent">2026-05-26</span>,
-                <span class="ent">db-07</span> reached the core through
-                <span class="ent">leaf-sw-3</span> and
-                <span class="ent">spine-sw-1</span>. Since then,
-                <span class="ent">leaf-sw-3</span> was swapped for
-                <span class="ent">leaf-sw-9</span>
-                (<span class="ent">2026-05-28 14:12 UTC</span>); the spine path
-                is unchanged.
-              </p>
+            <div class="term-body">
+              <div class="term-line">
+                <span class="term-prompt">$</span> ask
+                <span class="term-str">"which switches did db-07 depend on last
+                Tuesday — and what changed since?"</span>
+              </div>
+              <div class="term-response">
+                <div class="term-line">
+                  <span class="term-marker">→</span>
+                  <span class="term-ent">db-07</span> dependency path
+                  <span class="term-dim">@</span>
+                  <span class="term-ent">2026-05-26</span>
+                </div>
+                <div class="term-line term-indent">
+                  core <span class="term-marker">←</span>
+                  <span class="term-ent">leaf-sw-3</span>,
+                  <span class="term-ent">spine-sw-1</span>
+                </div>
+                <div class="term-line">
+                  <span class="term-marker">Δ</span> since
+                  <span class="term-ent">leaf-sw-3</span>
+                  <span class="term-marker">→</span>
+                  <span class="term-ent">leaf-sw-9</span>
+                  <span class="term-dim">(</span><span class="term-ent"
+                    >2026-05-28 14:12 UTC</span
+                  ><span class="term-dim">)</span>
+                </div>
+                <div class="term-line term-indent term-dim">
+                  spine path unchanged
+                </div>
+                <div class="term-line">
+                  <span class="cursor" aria-hidden="true"></span>
+                </div>
+              </div>
             </div>
-          </figure>
+          </div>
           <p class="demo-caption">
-            Your AI assistant answers in plain language. Toise supplies the
-            live, time-aware graph behind it through a native MCP server — no
-            dashboards to pivot through.
+            A native MCP server your AI assistant drives on your behalf — it
+            asks in plain language, Toise answers from the live, time-aware
+            graph. No dashboards to pivot through.
           </p>
         </section>
 
