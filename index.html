@@ -214,64 +214,74 @@
         width: auto;
       }
 
-      /* ---- Natural-language query demo: a static "MCP conversation" ---- */
+      /* ---- Query demo: one "paper" transcript panel, no nested bubbles ---- */
       .demo {
         padding-top: 8px;
       }
 
-      .chat {
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        background: #fffdfa;
-        padding: 22px 20px;
-        max-width: 600px;
+      .transcript {
         margin: 0 auto;
-        box-shadow: 0 1px 0 rgba(26, 26, 26, 0.03);
-      }
-
-      .bubble {
-        font-size: 0.97rem;
-        line-height: 1.6;
-        border-radius: 10px;
-        padding: 12px 16px;
-      }
-
-      .bubble + .bubble {
-        margin-top: 14px;
-      }
-
-      .bubble .who {
-        display: block;
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        text-transform: uppercase;
-        margin-bottom: 4px;
-      }
-
-      .bubble-user {
-        background: var(--bg);
+        max-width: 620px;
+        background: #fffdf9;
         border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(26, 26, 26, 0.05);
+        overflow: hidden;
       }
 
-      .bubble-user .who {
+      .turn {
+        padding: 18px 24px;
+        border-left: 4px solid #d2c4ad;
+      }
+
+      .turn + .turn {
+        border-top: 1px solid var(--line);
+      }
+
+      .turn p {
+        margin: 0;
+        font-size: 0.98rem;
+        line-height: 1.62;
+      }
+
+      .turn-assistant {
+        border-left-color: var(--accent);
+        background: rgba(184, 89, 61, 0.04);
+      }
+
+      .role {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+      }
+
+      .turn-user .role {
         color: var(--muted);
       }
 
-      .bubble-assistant {
-        background: rgba(184, 89, 61, 0.06);
-        border: 1px solid rgba(184, 89, 61, 0.22);
-      }
-
-      .bubble-assistant .who {
+      .turn-assistant .role {
         color: var(--accent);
       }
 
-      .bubble .via {
-        font-weight: 600;
+      .role-via {
+        font-weight: 500;
         color: var(--muted);
         text-transform: none;
         letter-spacing: 0;
+      }
+
+      /* Graph entities surfaced from Toise — rendered as data, not prose */
+      .ent {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.86em;
+        color: var(--accent-dark);
+        background: rgba(184, 89, 61, 0.07);
+        padding: 0.5px 5px;
+        border-radius: 4px;
+        white-space: nowrap;
       }
 
       .demo-caption {
@@ -279,7 +289,7 @@
         font-size: 0.92rem;
         color: var(--muted);
         max-width: 48ch;
-        margin: 18px auto 0;
+        margin: 20px auto 0;
       }
 
       /* ---- "What it does" — three columns, stack under 720px ---- */
@@ -418,19 +428,28 @@
         <hr class="divider" />
 
         <section class="demo" aria-label="Example assistant conversation powered by Toise">
-          <div class="chat">
-            <div class="bubble bubble-user">
-              <span class="who">You</span>
-              Which switches did host db-07 depend on last Tuesday, and what has
-              changed since?
+          <figure class="transcript">
+            <div class="turn turn-user">
+              <span class="role">You</span>
+              <p>
+                Which switches did host <span class="ent">db-07</span> depend on
+                last Tuesday, and what has changed since?
+              </p>
             </div>
-            <div class="bubble bubble-assistant">
-              <span class="who">Assistant <span class="via">· via Toise MCP</span></span>
-              On Tue 2026-05-26, db-07 reached the core through leaf-sw-3 and
-              spine-sw-1. Since then, leaf-sw-3 was swapped for leaf-sw-9
-              (2026-05-28 14:12 UTC); the spine path is unchanged.
+            <div class="turn turn-assistant">
+              <span class="role">Assistant<span class="role-via"> · via Toise MCP</span></span>
+              <p>
+                On <span class="ent">2026-05-26</span>,
+                <span class="ent">db-07</span> reached the core through
+                <span class="ent">leaf-sw-3</span> and
+                <span class="ent">spine-sw-1</span>. Since then,
+                <span class="ent">leaf-sw-3</span> was swapped for
+                <span class="ent">leaf-sw-9</span>
+                (<span class="ent">2026-05-28 14:12 UTC</span>); the spine path
+                is unchanged.
+              </p>
             </div>
-          </div>
+          </figure>
           <p class="demo-caption">
             Your AI assistant answers in plain language. Toise supplies the
             live, time-aware graph behind it through a native MCP server — no
