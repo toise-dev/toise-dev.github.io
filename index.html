@@ -10,6 +10,7 @@
       content="Toise maintains a live, queryable graph of your infrastructure — OpenTelemetry-native and built to be queried by your AI assistant. Open source, Apache 2.0."
     />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://toise.dev/" />
 
     <!-- Open Graph -->
     <meta property="og:title" content="Toise — The living, queryable map of your infrastructure" />
@@ -85,6 +86,15 @@
 
       a:hover {
         text-decoration: underline;
+      }
+
+      /* ---- Keyboard focus: visible ring for every interactive target ---- */
+      a:focus-visible,
+      .btn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 4px;
+        text-decoration: none;
       }
 
       /* ---- Header ---- */
@@ -187,6 +197,91 @@
         text-decoration: none;
       }
 
+      /* ---- Badges: reserve vertical space (min-height) to avoid CLS ---- */
+      .badges {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-items: center;
+        min-height: 20px;
+        margin: 24px 0 0;
+      }
+
+      .badges img {
+        display: block;
+        height: 20px;
+        width: auto;
+      }
+
+      /* ---- Natural-language query demo: a static "MCP conversation" ---- */
+      .demo {
+        padding-top: 8px;
+      }
+
+      .chat {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fffdfa;
+        padding: 22px 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 1px 0 rgba(26, 26, 26, 0.03);
+      }
+
+      .bubble {
+        font-size: 0.97rem;
+        line-height: 1.6;
+        border-radius: 10px;
+        padding: 12px 16px;
+      }
+
+      .bubble + .bubble {
+        margin-top: 14px;
+      }
+
+      .bubble .who {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+
+      .bubble-user {
+        background: var(--bg);
+        border: 1px solid var(--line);
+      }
+
+      .bubble-user .who {
+        color: var(--muted);
+      }
+
+      .bubble-assistant {
+        background: rgba(184, 89, 61, 0.06);
+        border: 1px solid rgba(184, 89, 61, 0.22);
+      }
+
+      .bubble-assistant .who {
+        color: var(--accent);
+      }
+
+      .bubble .via {
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: none;
+        letter-spacing: 0;
+      }
+
+      .demo-caption {
+        text-align: center;
+        font-size: 0.92rem;
+        color: var(--muted);
+        max-width: 48ch;
+        margin: 18px auto 0;
+      }
+
       /* ---- "What it does" — three columns, stack under 720px ---- */
       .cols {
         display: grid;
@@ -249,13 +344,31 @@
         }
       }
     </style>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": "Toise",
+        "description": "Toise maintains a live, queryable graph of your infrastructure — OpenTelemetry-native and built to be queried by your AI assistant.",
+        "url": "https://toise.dev/",
+        "codeRepository": "https://github.com/toise-dev/toise",
+        "programmingLanguage": "Go",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "author": {
+          "@type": "Organization",
+          "name": "Sensor Factory",
+          "url": "https://sensorfactory.fr"
+        }
+      }
+    </script>
   </head>
 
   <body>
     <div class="wrap">
       <header>
         <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
-        <nav>
+        <nav aria-label="Primary">
           <a href="https://github.com/toise-dev/toise">GitHub</a>
           <a href="https://github.com/toise-dev/toise/tree/main/docs">Docs</a>
         </nav>
@@ -263,21 +376,69 @@
 
       <main>
         <section class="hero">
-          <h1>The living map of your infrastructure.</h1>
+          <h1>The living, queryable map of your infrastructure.</h1>
           <p class="subtagline">
             An OpenTelemetry-native graph of your infrastructure — temporal by
             design, and built to be queried by your AI assistant.
           </p>
           <div class="buttons">
             <a class="btn btn-primary" href="https://github.com/toise-dev/toise"
-              >View on GitHub</a
+              >★ Star on GitHub</a
             >
             <a
               class="btn btn-secondary"
-              href="https://github.com/toise-dev/toise/blob/main/docs/roadmap.md"
-              >Read the roadmap</a
+              href="https://github.com/toise-dev/toise/tree/main/docs"
+              >Read the docs</a
             >
           </div>
+          <div class="badges">
+            <a href="https://github.com/toise-dev/toise/stargazers" aria-label="GitHub stars">
+              <img
+                src="https://img.shields.io/github/stars/toise-dev/toise?style=flat&label=stars&color=b8593d&labelColor=6b6259"
+                alt="GitHub stars"
+                width="84"
+                height="20"
+                loading="lazy"
+              />
+            </a>
+            <img
+              src="https://img.shields.io/badge/license-Apache_2.0-b8593d?labelColor=6b6259"
+              alt="License: Apache 2.0"
+              width="124"
+              height="20"
+              loading="lazy"
+            />
+            <img
+              src="https://img.shields.io/badge/status-early_development-9c4631?labelColor=6b6259"
+              alt="Status: early development"
+              width="158"
+              height="20"
+              loading="lazy"
+            />
+          </div>
+        </section>
+
+        <hr class="divider" />
+
+        <section class="demo" aria-label="Example assistant conversation powered by Toise">
+          <div class="chat">
+            <div class="bubble bubble-user">
+              <span class="who">You</span>
+              Which switches did host db-07 depend on last Tuesday, and what has
+              changed since?
+            </div>
+            <div class="bubble bubble-assistant">
+              <span class="who">Assistant <span class="via">· via Toise MCP</span></span>
+              On Tue 2026-05-26, db-07 reached the core through leaf-sw-3 and
+              spine-sw-1. Since then, leaf-sw-3 was swapped for leaf-sw-9
+              (2026-05-28 14:12 UTC); the spine path is unchanged.
+            </div>
+          </div>
+          <p class="demo-caption">
+            Your AI assistant answers in plain language. Toise supplies the
+            live, time-aware graph behind it through a native MCP server — no
+            dashboards to pivot through.
+          </p>
         </section>
 
         <hr class="divider" />
@@ -343,21 +504,35 @@
         <hr class="divider" />
 
         <section>
-          <h2>License &amp; maintainers</h2>
+          <h2>Follow along</h2>
           <p>
-            Toise is released under the Apache License 2.0. It is initiated and
-            primarily maintained by
-            <a href="https://sensorfactory.fr">Sensor Factory</a>. Contributions
-            from the broader community are welcome.
+            Toise is built in the open. The fastest way to support it is to star
+            the repository — it's the signal that tells us the direction
+            resonates. Watch the roadmap to see what's landing next, or open an
+            issue to shape it.
           </p>
+          <div class="buttons">
+            <a class="btn btn-primary" href="https://github.com/toise-dev/toise"
+              >★ Star on GitHub</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/toise-dev/toise/blob/main/docs/roadmap.md"
+              >Read the roadmap</a
+            >
+          </div>
         </section>
       </main>
 
       <hr class="divider" />
 
       <footer>
-        <div class="copy">© 2026 Toise contributors. Apache License 2.0.</div>
-        <nav>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
           <a href="https://github.com/toise-dev/toise">GitHub</a>
           <a href="https://github.com/toise-dev/toise/blob/main/docs/roadmap.md"
             >Roadmap</a
