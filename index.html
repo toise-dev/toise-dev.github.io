@@ -358,6 +358,245 @@
         margin: 0;
       }
 
+      .cols.cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      /* ---- Section lead + sub-heading ---- */
+      .lead {
+        color: var(--muted);
+        max-width: 62ch;
+      }
+
+      .sub {
+        font-size: 1.05rem;
+        margin: 30px 0 14px;
+      }
+
+      /* ---- How it works: vertical pipeline ---- */
+      .flow {
+        display: flex;
+        flex-direction: column;
+        max-width: 560px;
+        margin: 8px auto 0;
+      }
+
+      .flow-step {
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        background: #fffdf9;
+        padding: 14px 18px;
+      }
+
+      .flow-step h3 {
+        font-size: 1rem;
+        margin: 0 0 4px;
+      }
+
+      .flow-step p {
+        font-size: 0.92rem;
+        color: var(--muted);
+        margin: 0;
+      }
+
+      .step-kind {
+        display: block;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 3px;
+      }
+
+      .flow-arrow {
+        align-self: center;
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1;
+        padding: 7px 0;
+      }
+
+      /* ---- MCP tools grid ---- */
+      .tools {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 28px;
+      }
+
+      .tool {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .tool code {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--accent-dark);
+      }
+
+      .tool span {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      /* ---- Example questions ---- */
+      .asks {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+
+      .asks li {
+        position: relative;
+        padding-left: 22px;
+        font-size: 0.97rem;
+      }
+
+      .asks li::before {
+        content: "›";
+        position: absolute;
+        left: 5px;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      /* ---- Light GraphQL code card ---- */
+      .codecard {
+        margin: 18px auto 0;
+        max-width: 560px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fffdf9;
+        overflow: hidden;
+      }
+
+      .cc-bar {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.03em;
+        color: var(--muted);
+        padding: 9px 16px;
+        border-bottom: 1px solid var(--line);
+        background: #f6efe4;
+      }
+
+      .codecard pre {
+        margin: 0;
+        padding: 15px 16px;
+        overflow-x: auto;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.82rem;
+        line-height: 1.6;
+        color: var(--ink);
+      }
+
+      .codecard .k {
+        color: var(--accent-dark);
+      }
+
+      .codecard .c {
+        color: var(--muted);
+      }
+
+      /* ---- Roadmap timeline ---- */
+      .timeline {
+        margin: 4px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .tl {
+        position: relative;
+        padding: 0 0 22px 26px;
+        border-left: 2px solid var(--line);
+      }
+
+      .tl:last-child {
+        padding-bottom: 0;
+      }
+
+      .tl::before {
+        content: "";
+        position: absolute;
+        left: -7px;
+        top: 3px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 2px solid var(--accent);
+      }
+
+      .tl-when {
+        font-weight: 700;
+        font-size: 0.98rem;
+      }
+
+      .tl-when .tag {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.66rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--accent);
+        margin-left: 9px;
+      }
+
+      .tl p {
+        margin: 4px 0 0;
+        font-size: 0.93rem;
+        color: var(--muted);
+      }
+
+      /* ---- FAQ: native <details> accordion ---- */
+      .faq details {
+        border-bottom: 1px solid var(--line);
+        padding: 15px 0;
+      }
+
+      .faq details:first-of-type {
+        border-top: 1px solid var(--line);
+      }
+
+      .faq summary {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1.02rem;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .faq summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .faq summary::after {
+        content: "+";
+        color: var(--accent);
+        font-size: 1.35rem;
+        line-height: 1;
+        flex: none;
+      }
+
+      .faq details[open] summary::after {
+        content: "−";
+      }
+
+      .faq details p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 0.96rem;
+      }
+
       /* ---- Section divider hairline ---- */
       .divider {
         border: 0;
@@ -391,6 +630,11 @@
         .cols {
           grid-template-columns: 1fr;
           gap: 28px;
+        }
+
+        .cols.cols-2,
+        .tools {
+          grid-template-columns: 1fr;
         }
 
         .hero h1 {
@@ -545,6 +789,58 @@
         <hr class="divider" />
 
         <section>
+          <h2>How it works</h2>
+          <p class="lead">
+            Toise is a pipeline, not a poller. Telemetry flows in as standard
+            OpenTelemetry entity events; Toise records every change and serves
+            the resulting graph to humans and machines alike.
+          </p>
+          <div class="flow">
+            <div class="flow-step">
+              <span class="step-kind">Producers</span>
+              <h3>Any OpenTelemetry producer</h3>
+              <p>
+                Host and network agents emit OTLP entity events. Toise runs no
+                collectors and speaks no device protocols itself — emitting
+                those events is the producers' job.
+              </p>
+            </div>
+            <div class="flow-arrow" aria-hidden="true">▼</div>
+            <div class="flow-step">
+              <span class="step-kind">Ingest &amp; store</span>
+              <h3>Durable event log</h3>
+              <p>
+                The OTLP receiver appends every observation to an append-only,
+                event-sourced log — the system of record for what was seen and
+                when.
+              </p>
+            </div>
+            <div class="flow-arrow" aria-hidden="true">▼</div>
+            <div class="flow-step">
+              <span class="step-kind">Project</span>
+              <h3>Live, time-aware graph</h3>
+              <p>
+                A projection replays the log into an in-memory graph of entities
+                and relationships — current state, with the full history one
+                step away.
+              </p>
+            </div>
+            <div class="flow-arrow" aria-hidden="true">▼</div>
+            <div class="flow-step">
+              <span class="step-kind">Query</span>
+              <h3>GraphQL &amp; MCP</h3>
+              <p>
+                Read the same graph two ways: a GraphQL API for humans,
+                dashboards, and tools — and a native MCP server your AI
+                assistant drives directly.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
           <h2>What it does</h2>
           <div class="cols">
             <div>
@@ -571,6 +867,196 @@
                 any entity.
               </p>
             </div>
+          </div>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>Two ways to query the graph</h2>
+          <p class="lead">
+            One read model, two surfaces. A GraphQL API for people and tools,
+            and a Model Context Protocol server with typed tools your AI
+            assistant calls on your behalf.
+          </p>
+
+          <div class="codecard">
+            <div class="cc-bar">GraphQL · for humans, dashboards &amp; tools</div>
+            <pre><code><span class="c"># the same graph, queried directly</span>
+query {
+  <span class="k">entity</span>(id: "db-07") {
+    label
+    types
+    relations { label type }
+  }
+  <span class="k">recentChanges</span>(within: "1h") {
+    edges { node { changeType entity { label } eventTime } }
+  }
+}</code></pre>
+          </div>
+
+          <h3 class="sub">MCP tools your assistant can call</h3>
+          <div class="tools">
+            <div class="tool">
+              <code>find_entities</code><span>filter by type and attributes</span>
+            </div>
+            <div class="tool">
+              <code>get_entity</code><span>fetch one entity by id</span>
+            </div>
+            <div class="tool">
+              <code>get_neighbors</code><span>traverse relationships, depth-bounded</span>
+            </div>
+            <div class="tool">
+              <code>entity_history</code><span>timeline of an entity, with audit view</span>
+            </div>
+            <div class="tool">
+              <code>recent_changes</code><span>what changed in a window, incl. structural</span>
+            </div>
+            <div class="tool">
+              <code>describe_schema</code><span>summary + per-type counts to orient the model</span>
+            </div>
+          </div>
+
+          <ul class="asks">
+            <li>"What changed in the network in the last hour?"</li>
+            <li>"If leaf-sw-3 goes down, what loses connectivity?"</li>
+            <li>"Show db-07's dependencies as they were last Tuesday."</li>
+            <li>"What did we know about this host at 09:00 — not what we know now?"</li>
+          </ul>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>Built temporal, not snapshot</h2>
+          <div class="cols cols-2">
+            <div>
+              <h3>Two timelines, on purpose</h3>
+              <p>
+                Every event records both when it happened (<em>event time</em>)
+                and when Toise learned it (<em>recorded time</em>). Ask for the
+                reality view — “how was it last Tuesday?” — or the audit view —
+                “what did we know at 09:00?” Bi-temporal by construction.
+              </p>
+            </div>
+            <div>
+              <h3>Stable identity through change</h3>
+              <p>
+                An entity keeps one logical identity even when its identifying
+                attributes change — a renamed host stays the same host on its
+                timeline. A content hash handles lookup and idempotency, so
+                re-observations never fork the graph.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>Roadmap</h2>
+          <p class="lead">
+            High-level direction. Dates are targets, not commitments — they
+            shift as the design firms up and as we learn from early deployments.
+          </p>
+          <ul class="timeline">
+            <li class="tl">
+              <div class="tl-when">Foundations <span class="tag">underway</span></div>
+              <p>
+                Event-sourced graph store, an OpenTelemetry-aligned entity
+                model, OTLP ingestion, real-time subscriptions, and the GraphQL
+                + MCP read surfaces.
+              </p>
+            </li>
+            <li class="tl">
+              <div class="tl-when">Breadth &amp; first demo <span class="tag">next</span></div>
+              <p>
+                A broader ecosystem of OpenTelemetry producers, a debug UI, and
+                a public demo scenario walking an entity through a day of
+                change.
+              </p>
+            </li>
+            <li class="tl">
+              <div class="tl-when">Toward production <span class="tag">2027</span></div>
+              <p>
+                A pilot deployment with an early partner, hardening, and a public
+                release candidate.
+              </p>
+            </li>
+            <li class="tl">
+              <div class="tl-when">Beyond</div>
+              <p>
+                Federation across sites, richer graph-query semantics, and a
+                wider integration ecosystem.
+              </p>
+            </li>
+          </ul>
+          <p class="lead">
+            See the
+            <a href="https://github.com/toise-dev/toise/blob/main/docs/roadmap.md"
+              >full roadmap</a
+            >
+            for detail.
+          </p>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>FAQ</h2>
+          <div class="faq">
+            <details>
+              <summary>Is Toise ready for production?</summary>
+              <p>
+                Not yet. Toise is in early development — the data model and APIs
+                are still stabilising and breaking changes are expected. Phase 1
+                ships no authentication and binds to localhost by default. Follow
+                the roadmap to track progress.
+              </p>
+            </details>
+            <details>
+              <summary>Does Toise collect data from my devices?</summary>
+              <p>
+                No. Toise ingests OpenTelemetry entity events from any OTLP
+                producer; it runs no collectors and speaks no device protocols
+                itself. Emitting those events — from hosts, network gear, or
+                cloud APIs — is the producers' job.
+              </p>
+            </details>
+            <details>
+              <summary>How is this different from a CMDB?</summary>
+              <p>
+                A CMDB is usually hand-curated and point-in-time. Toise is
+                event-sourced and bi-temporal: it's populated from telemetry,
+                and you can query any past state and exactly what changed — not
+                just the present.
+              </p>
+            </details>
+            <details>
+              <summary>What is MCP?</summary>
+              <p>
+                The Model Context Protocol — an open standard that lets an AI
+                assistant call tools. Toise ships a native MCP server (on the
+                official Go SDK) over HTTP and stdio, so assistants like Claude
+                Desktop can read the graph on your behalf.
+              </p>
+            </details>
+            <details>
+              <summary>Is Toise tied to a particular agent or vendor?</summary>
+              <p>
+                No. Any OpenTelemetry producer works. senhub-agent is one
+                example among others — Toise speaks the standard, not a
+                proprietary protocol.
+              </p>
+            </details>
+            <details>
+              <summary>Where does it fit in the observability stack?</summary>
+              <p>
+                It's the missing inventory-and-topology brick alongside
+                OpenTelemetry, VictoriaMetrics, Grafana, Loki, and Tempo — the
+                live map of what exists and how it connects, over time.
+              </p>
+            </details>
           </div>
         </section>
 
