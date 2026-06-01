@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="102" height="20" role="img" aria-label="GitHub: star">
+  <title>GitHub: star</title>
+  <clipPath id="r"><rect width="102" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="50" height="20" fill="#6b6259"/>
+    <rect x="50" width="52" height="20" fill="#b8593d"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif" font-size="11">
+    <text x="25" y="15" fill="#010101" fill-opacity=".25" textLength="38" lengthAdjust="spacingAndGlyphs">github</text>
+    <text x="25" y="14" textLength="38" lengthAdjust="spacingAndGlyphs">github</text>
+    <text x="76" y="15" fill="#010101" fill-opacity=".25" textLength="40" lengthAdjust="spacingAndGlyphs">★ star</text>
+    <text x="76" y="14" textLength="40" lengthAdjust="spacingAndGlyphs">★ star</text>
+  </g>
+</svg>
