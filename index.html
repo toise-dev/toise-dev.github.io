@@ -660,6 +660,139 @@
         font-size: 0.96rem;
       }
 
+      /* ---- Entity graph: hand-laid inline SVG, animated in pure CSS ---- */
+      .graphwrap {
+        max-width: 600px;
+        margin: 8px auto 0;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fffdf9;
+        box-shadow: 0 1px 3px rgba(26, 26, 26, 0.05);
+        overflow: hidden;
+      }
+
+      .graph {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      /* gentle global float — moves the whole graph as one, edges stay attached */
+      .gfloat {
+        animation: gfloat 9s ease-in-out infinite;
+      }
+
+      @keyframes gfloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-7px);
+        }
+      }
+
+      /* edges: telemetry "flowing" along the relationship */
+      .gedge {
+        fill: none;
+        stroke: #d8c8b0;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-dasharray: 1.5 7;
+        animation: gflow 1.15s linear infinite;
+      }
+
+      .gedge.rev {
+        animation-direction: reverse;
+      }
+
+      @keyframes gflow {
+        to {
+          stroke-dashoffset: -8.5;
+        }
+      }
+
+      /* nodes, coloured by entity type (within the warm palette) */
+      .n-host {
+        fill: var(--accent);
+      }
+
+      .n-proc {
+        fill: #fffdf9;
+        stroke: var(--ink);
+        stroke-width: 1.6;
+      }
+
+      .n-dev {
+        fill: #cbb89e;
+      }
+
+      .n-net {
+        fill: #fffdf9;
+        stroke: var(--muted);
+        stroke-width: 1.4;
+      }
+
+      /* soft pulsing halos behind a few nodes */
+      .ghalo {
+        fill: var(--accent);
+        opacity: 0;
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: ghalo 3.2s ease-out infinite;
+      }
+
+      @keyframes ghalo {
+        0% {
+          transform: scale(0.6);
+          opacity: 0.28;
+        }
+        70% {
+          opacity: 0;
+        }
+        100% {
+          transform: scale(2.4);
+          opacity: 0;
+        }
+      }
+
+      .glabel {
+        fill: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 12px;
+        text-anchor: middle;
+      }
+
+      .glabel.host {
+        font-weight: 600;
+      }
+
+      .gelabel {
+        fill: var(--muted);
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 9.5px;
+        text-anchor: middle;
+      }
+
+      .gelabel-bg {
+        fill: var(--bg);
+        opacity: 0.92;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .gfloat,
+        .gedge,
+        .ghalo {
+          animation: none;
+        }
+        .gedge {
+          stroke-dasharray: none;
+        }
+        .ghalo {
+          opacity: 0;
+        }
+      }
+
       /* ---- Section divider hairline ---- */
       .divider {
         border: 0;
@@ -849,6 +982,88 @@
             observability stack (OpenTelemetry, VictoriaMetrics, Grafana, Loki,
             Tempo), designed so an AI assistant can answer an operator's
             questions about it directly.
+          </p>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>See it as a graph</h2>
+          <p class="lead">
+            Entities and the relationships between them — hosts, processes,
+            interfaces, addresses, and the edges that link them — the way Toise
+            holds them. This one is a sketch; the real graph is whatever your
+            producers emit.
+          </p>
+          <figure class="graphwrap">
+            <svg
+              class="graph"
+              viewBox="0 0 640 460"
+              role="img"
+              aria-label="An entity graph: the host web-server-1 runs the nginx and postgres processes, has the eth0 interface and an address, and reaches a second host through a gateway and a switch."
+            >
+              <g class="gfloat">
+                <!-- edges -->
+                <line class="gedge" x1="120" y1="115" x2="250" y2="230" />
+                <line class="gedge rev" x1="120" y1="345" x2="250" y2="230" />
+                <line class="gedge" x1="250" y1="230" x2="290" y2="355" />
+                <line class="gedge rev" x1="120" y1="115" x2="45" y2="55" />
+                <line class="gedge" x1="290" y1="355" x2="385" y2="415" />
+                <line class="gedge rev" x1="250" y1="230" x2="450" y2="195" />
+                <line class="gedge" x1="450" y1="195" x2="575" y2="255" />
+                <line class="gedge rev" x1="520" y1="95" x2="575" y2="255" />
+                <line class="gedge" x1="520" y1="95" x2="450" y2="195" />
+
+                <!-- edge labels -->
+                <g>
+                  <rect class="gelabel-bg" x="162" y="164" width="46" height="14" rx="3" />
+                  <text class="gelabel" x="185" y="174">runs_on</text>
+                </g>
+                <g>
+                  <rect class="gelabel-bg" x="231" y="285" width="78" height="14" rx="3" />
+                  <text class="gelabel" x="270" y="295">has_interface</text>
+                </g>
+                <g>
+                  <rect class="gelabel-bg" x="314" y="205" width="72" height="14" rx="3" />
+                  <text class="gelabel" x="350" y="215">next_hop_via</text>
+                </g>
+                <g>
+                  <rect class="gelabel-bg" x="479" y="218" width="66" height="14" rx="3" />
+                  <text class="gelabel" x="512" y="228">forwards_to</text>
+                </g>
+
+                <!-- pulsing halos -->
+                <circle class="ghalo" cx="250" cy="230" r="22" />
+                <circle class="ghalo" cx="520" cy="95" r="20" style="animation-delay: 1.1s" />
+                <circle class="ghalo" cx="575" cy="255" r="16" style="animation-delay: 2.1s" />
+
+                <!-- nodes -->
+                <circle class="n-host" cx="250" cy="230" r="22" />
+                <circle class="n-host" cx="520" cy="95" r="20" />
+                <circle class="n-proc" cx="120" cy="115" r="14" />
+                <circle class="n-proc" cx="120" cy="345" r="14" />
+                <circle class="n-dev" cx="450" cy="195" r="16" />
+                <circle class="n-dev" cx="575" cy="255" r="16" />
+                <circle class="n-net" cx="290" cy="355" r="11" />
+                <circle class="n-net" cx="45" cy="55" r="9" />
+                <circle class="n-net" cx="385" cy="415" r="9" />
+
+                <!-- node labels -->
+                <text class="glabel host" x="250" y="273">web-server-1</text>
+                <text class="glabel host" x="520" y="128">app-server-2</text>
+                <text class="glabel" x="120" y="143">nginx</text>
+                <text class="glabel" x="120" y="373">postgres</text>
+                <text class="glabel" x="450" y="223">10.0.2.1</text>
+                <text class="glabel" x="575" y="283">core-sw</text>
+                <text class="glabel" x="290" y="381">eth0</text>
+                <text class="glabel" x="45" y="79">:80</text>
+                <text class="glabel" x="385" y="438">10.0.2.7</text>
+              </g>
+            </svg>
+          </figure>
+          <p class="demo-caption">
+            Illustrative — node colour is the entity type, each edge a typed
+            relationship.
           </p>
         </section>
 
