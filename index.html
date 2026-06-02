@@ -842,6 +842,78 @@
         stroke-linejoin: round;
       }
 
+      /* hover-highlight: focus a node and its neighbours, fade the rest */
+      .graph.interactive .gnode,
+      .graph.interactive .gedge,
+      .graph.interactive .gelabel {
+        transition: opacity 0.12s ease;
+      }
+
+      .graph.interactive.dim .gnode,
+      .graph.interactive.dim .gedge,
+      .graph.interactive.dim .gelabel {
+        opacity: 0.16;
+      }
+
+      .graph.interactive.dim .gnode.hot,
+      .graph.interactive.dim .gedge.hot,
+      .graph.interactive.dim .gelabel.hot {
+        opacity: 1;
+      }
+
+      .graph.interactive.dim .gedge.hot {
+        stroke: var(--accent);
+        stroke-width: 2.1;
+      }
+
+      /* node-type legend */
+      .graph-legend {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 18px;
+        justify-content: center;
+        margin: 14px 0 0;
+        padding: 0;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .graph-legend li {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .graph-legend .lg {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex: none;
+      }
+
+      .lg-host {
+        background: var(--accent);
+      }
+
+      .lg-proc {
+        background: #fffdf9;
+        border: 1.6px solid var(--ink);
+      }
+
+      .lg-db {
+        background: #a87f4e;
+      }
+
+      .lg-dev {
+        background: #cbb89e;
+      }
+
+      .lg-net {
+        background: #fffdf9;
+        border: 1.4px solid var(--muted);
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .gfloat,
         .gedge,
@@ -1140,9 +1212,16 @@
               </g>
             </svg>
           </figure>
+          <ul class="graph-legend">
+            <li><span class="lg lg-host"></span>host</li>
+            <li><span class="lg lg-proc"></span>process / service</li>
+            <li><span class="lg lg-db"></span>database</li>
+            <li><span class="lg lg-dev"></span>network device</li>
+            <li><span class="lg lg-net"></span>interface / address</li>
+          </ul>
           <p class="demo-caption">
-            Illustrative — node colour is the entity type, each edge a typed
-            relationship. Drag a node to explore.
+            Illustrative — colour is the entity type, each edge a typed
+            relationship. Hover a node to focus its neighbours; drag to explore.
           </p>
         </section>
 
@@ -1679,6 +1758,8 @@ query {
               n.g.appendChild(n.t);
               gN.appendChild(n.g);
               attachDrag(n);
+              n.g.addEventListener("mouseenter", function () { highlight(n); });
+              n.g.addEventListener("mouseleave", unhighlight);
             });
             kick();
           }
@@ -1738,6 +1819,26 @@ query {
               var ke = tick();
               raf = ke > 0.04 || dragging ? requestAnimationFrame(loop) : null;
             })();
+          }
+
+          function highlight(n) {
+            if (dragging) return;
+            var keep = {}; keep[n.id] = true;
+            edges.forEach(function (e) {
+              var on = e.s === n || e.t === n;
+              e.el.classList.toggle("hot", on);
+              e.lab.classList.toggle("hot", on);
+              if (on) { keep[e.s.id] = true; keep[e.t.id] = true; }
+            });
+            nodes.forEach(function (m) { m.g.classList.toggle("hot", !!keep[m.id]); });
+            svg.classList.add("dim");
+          }
+          function unhighlight() {
+            svg.classList.remove("dim");
+            nodes.forEach(function (m) { m.g.classList.remove("hot"); });
+            edges.forEach(function (e) {
+              e.el.classList.remove("hot"); e.lab.classList.remove("hot");
+            });
           }
 
           build("host");
