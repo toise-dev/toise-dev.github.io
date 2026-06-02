@@ -779,6 +779,69 @@
         opacity: 0.92;
       }
 
+      /* extra node type for the interactive graph */
+      .n-db {
+        fill: #a87f4e;
+      }
+
+      /* dataset toggle (created visible only when JS upgrades the graph) */
+      .graph-toggle {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 4px 0 16px;
+      }
+
+      .graph-toggle button {
+        font: inherit;
+        font-size: 0.85rem;
+        color: var(--muted);
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 5px 14px;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .graph-toggle button:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .graph-toggle button[aria-pressed="true"] {
+        background: var(--accent);
+        color: var(--bg);
+        border-color: var(--accent);
+      }
+
+      /* no text selection while dragging nodes/labels */
+      .graph.interactive {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      /* draggable nodes: grab cursor; isolate touch so the page still scrolls */
+      .graph.interactive .gnode {
+        cursor: grab;
+        touch-action: none;
+      }
+
+      .graph.interactive .gnode.dragging {
+        cursor: grabbing;
+      }
+
+      /* labels stay legible over moving edges via a cream stroke halo */
+      .graph.interactive .glabel,
+      .graph.interactive .gelabel {
+        paint-order: stroke;
+        stroke: var(--bg);
+        stroke-width: 3px;
+        stroke-linejoin: round;
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .gfloat,
         .gedge,
@@ -992,10 +1055,19 @@
           <p class="lead">
             Entities and the relationships between them — hosts, processes,
             interfaces, addresses, and the edges that link them — the way Toise
-            holds them. This one is a sketch; the real graph is whatever your
-            producers emit.
+            holds them. Drag the nodes to rearrange them, and switch between a
+            single host and a multi-site (on-prem + cloud) topology. Sketches,
+            of course — the real graph is whatever your producers emit.
           </p>
-          <figure class="graphwrap">
+          <div class="graph-toggle" id="graph-toggle" hidden>
+            <button type="button" data-set="host" aria-pressed="true">
+              Single host
+            </button>
+            <button type="button" data-set="multisite" aria-pressed="false">
+              Multi-site · on-prem + cloud
+            </button>
+          </div>
+          <figure class="graphwrap" id="entity-graph">
             <svg
               class="graph"
               viewBox="0 0 640 460"
@@ -1063,7 +1135,7 @@
           </figure>
           <p class="demo-caption">
             Illustrative — node colour is the entity type, each edge a typed
-            relationship.
+            relationship. Drag a node to explore.
           </p>
         </section>
 
@@ -1437,5 +1509,251 @@ query {
         </nav>
       </footer>
     </div>
+
+    <!-- Progressive enhancement: upgrade the static entity graph into an
+         interactive force-directed graph. No dependency; if anything throws,
+         the static SVG fallback above stays in place. -->
+    <script>
+      (function () {
+        var fig = document.getElementById("entity-graph");
+        if (!fig || !document.createElementNS) return;
+        var NS = "http://www.w3.org/2000/svg";
+        var W = 640, H = 460, PAD = 48;
+        var R = { host: 20, db: 16, dev: 15, proc: 13, net: 9 };
+
+        var SETS = {
+          host: {
+            nodes: [
+              { id: "web", label: "web-server-1", type: "host" },
+              { id: "app2", label: "app-server-2", type: "host" },
+              { id: "nginx", label: "nginx", type: "proc" },
+              { id: "pg", label: "postgres", type: "proc" },
+              { id: "l80", label: ":80", type: "net" },
+              { id: "eth0", label: "eth0", type: "net" },
+              { id: "addr", label: "10.0.2.7", type: "net" },
+              { id: "gw", label: "10.0.2.1", type: "dev" },
+              { id: "sw", label: "core-sw", type: "dev" }
+            ],
+            edges: [
+              ["nginx", "web", "runs_on"],
+              ["pg", "web", "runs_on"],
+              ["web", "eth0", "has_interface"],
+              ["nginx", "l80", "listens_on"],
+              ["eth0", "addr", "bound_to"],
+              ["web", "gw", "next_hop_via"],
+              ["gw", "sw", "forwards_to"],
+              ["app2", "sw", "adjacent_to"],
+              ["app2", "gw", "next_hop_via"]
+            ]
+          },
+          multisite: {
+            nodes: [
+              { id: "rtr", label: "core-rtr", type: "dev" },
+              { id: "esxi", label: "esxi-01", type: "host" },
+              { id: "vm", label: "vm-app-01", type: "host" },
+              { id: "pgp", label: "pg-prod", type: "db" },
+              { id: "appsvc", label: "app-svc", type: "proc" },
+              { id: "vpn", label: "vpn-gw", type: "dev" },
+              { id: "cgw", label: "cloud-gw", type: "dev" },
+              { id: "ec2", label: "ec2-app-1", type: "host" },
+              { id: "rds", label: "rds-orders", type: "db" },
+              { id: "apisvc", label: "api-svc", type: "proc" }
+            ],
+            edges: [
+              ["appsvc", "vm", "runs_on"],
+              ["vm", "esxi", "runs_on"],
+              ["pgp", "esxi", "runs_on"],
+              ["vm", "rtr", "routes_via"],
+              ["rtr", "vpn", "forwards_to"],
+              ["vpn", "cgw", "forwards_to"],
+              ["cgw", "ec2", "forwards_to"],
+              ["apisvc", "ec2", "runs_on"],
+              ["rds", "cgw", "routes_via"],
+              ["appsvc", "vpn", "routes_via"]
+            ]
+          }
+        };
+
+        var reduce =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        try {
+          var svg = document.createElementNS(NS, "svg");
+          svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+          svg.setAttribute("class", "graph interactive");
+          svg.setAttribute("role", "img");
+          svg.setAttribute("aria-label", "Interactive entity graph — drag nodes to rearrange.");
+          var gE = document.createElementNS(NS, "g");
+          var gL = document.createElementNS(NS, "g");
+          var gN = document.createElementNS(NS, "g");
+          svg.appendChild(gE);
+          svg.appendChild(gL);
+          svg.appendChild(gN);
+
+          var nodes, edges, raf = null, dragging = false;
+          var pt = svg.createSVGPoint ? svg.createSVGPoint() : null;
+
+          function toSvg(evt) {
+            if (svg.createSVGPoint && svg.getScreenCTM) {
+              pt.x = evt.clientX; pt.y = evt.clientY;
+              var m = svg.getScreenCTM();
+              if (m) return pt.matrixTransform(m.inverse());
+            }
+            var r = svg.getBoundingClientRect();
+            return {
+              x: ((evt.clientX - r.left) / r.width) * W,
+              y: ((evt.clientY - r.top) / r.height) * H
+            };
+          }
+
+          function attachDrag(n) {
+            n.g.addEventListener("pointerdown", function (evt) {
+              evt.preventDefault();
+              dragging = true;
+              n.g.classList.add("dragging");
+              if (n.g.setPointerCapture) n.g.setPointerCapture(evt.pointerId);
+              var p = toSvg(evt); n.fx = p.x; n.fy = p.y;
+              kick();
+              function move(ev) {
+                var q = toSvg(ev); n.fx = q.x; n.fy = q.y;
+                if (reduce) { for (var i = 0; i < 30; i++) tick(); }
+              }
+              function up() {
+                /* sticky: keep the node pinned where it is dropped */
+                dragging = false;
+                n.g.classList.remove("dragging");
+                n.g.removeEventListener("pointermove", move);
+                n.g.removeEventListener("pointerup", up);
+                n.g.removeEventListener("pointercancel", up);
+                if (reduce) { for (var i = 0; i < 200; i++) tick(); render(); }
+              }
+              n.g.addEventListener("pointermove", move);
+              n.g.addEventListener("pointerup", up);
+              n.g.addEventListener("pointercancel", up);
+            });
+          }
+
+          function build(key) {
+            gE.textContent = ""; gL.textContent = ""; gN.textContent = "";
+            var data = SETS[key], byId = {};
+            nodes = data.nodes.map(function (n, i) {
+              var a = (i / data.nodes.length) * Math.PI * 2;
+              var nn = {
+                id: n.id, label: n.label, type: n.type, r: R[n.type] || 12,
+                x: W / 2 + Math.cos(a) * 130 + (Math.random() - 0.5) * 24,
+                y: H / 2 + Math.sin(a) * 95 + (Math.random() - 0.5) * 24,
+                vx: 0, vy: 0, fx: null, fy: null
+              };
+              byId[n.id] = nn; return nn;
+            });
+            edges = data.edges.map(function (e) {
+              return { s: byId[e[0]], t: byId[e[1]], label: e[2] };
+            });
+            edges.forEach(function (e) {
+              e.el = document.createElementNS(NS, "line");
+              e.el.setAttribute("class", "gedge");
+              gE.appendChild(e.el);
+              e.lab = document.createElementNS(NS, "text");
+              e.lab.setAttribute("class", "gelabel");
+              e.lab.textContent = e.label;
+              gL.appendChild(e.lab);
+            });
+            nodes.forEach(function (n) {
+              n.g = document.createElementNS(NS, "g");
+              n.g.setAttribute("class", "gnode");
+              n.c = document.createElementNS(NS, "circle");
+              n.c.setAttribute("class", "n-" + n.type);
+              n.c.setAttribute("r", n.r);
+              n.t = document.createElementNS(NS, "text");
+              n.t.setAttribute("class", "glabel" + (n.type === "host" ? " host" : ""));
+              n.t.textContent = n.label;
+              n.g.appendChild(n.c);
+              n.g.appendChild(n.t);
+              gN.appendChild(n.g);
+              attachDrag(n);
+            });
+            kick();
+          }
+
+          function tick() {
+            var i, a, b;
+            for (i = 0; i < nodes.length; i++) {
+              a = nodes[i];
+              for (var j = i + 1; j < nodes.length; j++) {
+                b = nodes[j];
+                var dx = a.x - b.x, dy = a.y - b.y;
+                var d2 = dx * dx + dy * dy + 0.01, d = Math.sqrt(d2);
+                var f = 6200 / d2, ux = dx / d, uy = dy / d;
+                a.vx += ux * f; a.vy += uy * f;
+                b.vx -= ux * f; b.vy -= uy * f;
+              }
+              a.vx += (W / 2 - a.x) * 0.012;
+              a.vy += (H / 2 - a.y) * 0.012;
+            }
+            edges.forEach(function (e) {
+              var dx = e.t.x - e.s.x, dy = e.t.y - e.s.y;
+              var d = Math.sqrt(dx * dx + dy * dy) + 0.01;
+              var f = (d - 108) * 0.02, ux = dx / d, uy = dy / d;
+              e.s.vx += ux * f; e.s.vy += uy * f;
+              e.t.vx -= ux * f; e.t.vy -= uy * f;
+            });
+            var ke = 0;
+            nodes.forEach(function (n) {
+              if (n.fx != null) { n.x = n.fx; n.y = n.fy; n.vx = 0; n.vy = 0; return; }
+              n.vx *= 0.86; n.vy *= 0.86;
+              n.x += n.vx; n.y += n.vy;
+              n.x = Math.max(PAD, Math.min(W - PAD, n.x));
+              n.y = Math.max(PAD - 6, Math.min(H - PAD - 8, n.y));
+              ke += n.vx * n.vx + n.vy * n.vy;
+            });
+            render();
+            return ke;
+          }
+
+          function render() {
+            edges.forEach(function (e) {
+              e.el.setAttribute("x1", e.s.x); e.el.setAttribute("y1", e.s.y);
+              e.el.setAttribute("x2", e.t.x); e.el.setAttribute("y2", e.t.y);
+              e.lab.setAttribute("x", (e.s.x + e.t.x) / 2);
+              e.lab.setAttribute("y", (e.s.y + e.t.y) / 2 - 3);
+            });
+            nodes.forEach(function (n) {
+              n.c.setAttribute("cx", n.x); n.c.setAttribute("cy", n.y);
+              n.t.setAttribute("x", n.x); n.t.setAttribute("y", n.y + n.r + 13);
+            });
+          }
+
+          function kick() {
+            if (reduce) { for (var i = 0; i < 420; i++) tick(); render(); return; }
+            if (raf) return;
+            (function loop() {
+              var ke = tick();
+              raf = ke > 0.04 || dragging ? requestAnimationFrame(loop) : null;
+            })();
+          }
+
+          build("host");
+          fig.textContent = "";
+          fig.appendChild(svg);
+
+          var toggle = document.getElementById("graph-toggle");
+          if (toggle) {
+            toggle.hidden = false;
+            var btns = toggle.querySelectorAll("button");
+            Array.prototype.forEach.call(btns, function (b) {
+              b.addEventListener("click", function () {
+                Array.prototype.forEach.call(btns, function (x) {
+                  x.setAttribute("aria-pressed", x === b ? "true" : "false");
+                });
+                build(b.getAttribute("data-set"));
+              });
+            });
+          }
+        } catch (err) {
+          /* keep the static fallback */
+        }
+      })();
+    </script>
   </body>
 </html>
