@@ -340,6 +340,69 @@
         margin: 20px auto 0;
       }
 
+      /* ---- Browser mockup: frame a screenshot in a window chrome ---- */
+      .browser {
+        max-width: 680px;
+        margin: 8px auto 0;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fffdf9;
+        box-shadow: 0 12px 34px rgba(26, 26, 26, 0.16);
+      }
+
+      .browser-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: #f1e9dc;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .browser-dots {
+        display: flex;
+        gap: 6px;
+        flex: none;
+      }
+
+      .browser-dots span {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+      }
+
+      .browser-dots span:nth-child(1) {
+        background: var(--accent);
+      }
+
+      .browser-dots span:nth-child(2) {
+        background: #7d7268;
+      }
+
+      .browser-dots span:nth-child(3) {
+        background: #4a443d;
+      }
+
+      .browser-url {
+        flex: 1;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 0.74rem;
+        color: var(--muted);
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 4px 10px;
+        text-align: center;
+      }
+
+      .browser img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 0;
+      }
+
       /* ---- "What it does" — three columns, stack under 720px ---- */
       .cols {
         display: grid;
@@ -614,6 +677,9 @@
 
       footer a {
         color: var(--muted);
+      }
+
+      footer nav a {
         margin: 0 10px;
       }
 
@@ -923,6 +989,34 @@ query {
             <li>"Show db-07's dependencies as they were last Tuesday."</li>
             <li>"What did we know about this host at 09:00 — not what we know now?"</li>
           </ul>
+        </section>
+
+        <hr class="divider" />
+
+        <section>
+          <h2>Or just look at it</h2>
+          <p class="lead">
+            Sometimes you don't want a query or an assistant — you want to
+            <em>see</em> the graph. Toise ships a built-in, zero-dependency debug
+            UI to inspect an entity, its neighbors, and its full history
+            directly. It's a developer aid, not a dashboard product — reading the
+            same graph that GraphQL and MCP do.
+          </p>
+          <figure class="browser">
+            <div class="browser-bar" aria-hidden="true">
+              <div class="browser-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="browser-url">127.0.0.1:8080/entity</div>
+            </div>
+            <img
+              src="/assets/debug-ui-entity.png"
+              width="1024"
+              height="759"
+              loading="lazy"
+              alt="Toise debug UI showing the host web-server-1 — its identity and attributes, its neighbors (eth0, nginx, postgres) linked by structural relations, and its full change history oldest-first."
+            />
+          </figure>
         </section>
 
         <hr class="divider" />
