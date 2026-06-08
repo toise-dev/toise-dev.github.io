@@ -1065,7 +1065,7 @@ migrated <strong>automatically</strong>. See the
   standard) or a <code>tenant.id</code> resource attribute, falling back to <code>default</code>. Ingest
   routes per <code>ResourceLogs</code>; queries (GraphQL, MCP, debug UI) are scoped by header;
   a query for tenant A never sees tenant B. See
-  <a href="../operations/configuration.md#multi-tenancy">Multi-tenancy</a>.</li>
+  <a href="../../configuration/#multi-tenancy">Multi-tenancy</a>.</li>
 <li><strong>Native authentication and TLS.</strong> Bearer tokens (<code>TOISE_AUTH_TOKENS</code>,
   environment-only) on the ingest and query surfaces, plus TLS from a cert/key pair.
   Both off by default; the operational probes and metrics scrape stay public.</li>
