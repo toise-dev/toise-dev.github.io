@@ -1349,7 +1349,16 @@ query {
               <code>entity_history</code><span>timeline of an entity, with audit view</span>
             </div>
             <div class="tool">
-              <code>recent_changes</code><span>what changed in a window, incl. structural</span>
+              <code>recent_changes</code><span>what changed in a window, budgeted + digested</span>
+            </div>
+            <div class="tool">
+              <code>graph_diff</code><span>net difference between two instants, flapping surfaced</span>
+            </div>
+            <div class="tool">
+              <code>find_path</code><span>shortest path between two entities, or a true "not connected"</span>
+            </div>
+            <div class="tool">
+              <code>telemetry_keys</code><span>the join keys to this entity's metrics and logs</span>
             </div>
             <div class="tool">
               <code>describe_schema</code><span>summary + per-type counts to orient the model</span>
@@ -1358,6 +1367,7 @@ query {
 
           <ul class="asks">
             <li>"What changed in the network in the last hour?"</li>
+            <li>"What is different now compared to this morning — and what flapped?"</li>
             <li>"If leaf-sw-3 goes down, what loses connectivity?"</li>
             <li>"Show db-07's dependencies as they were last Tuesday."</li>
             <li>"What did we know about this host at 09:00 — not what we know now?"</li>
