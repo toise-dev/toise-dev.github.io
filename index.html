@@ -1050,9 +1050,9 @@
               height="20"
             />
             <img
-              src="/assets/badges/status-early.svg"
-              alt="Status: early development"
-              width="160"
+              src="/assets/badges/status-alpha.svg"
+              alt="Status: alpha"
+              width="104"
               height="20"
             />
           </div>
@@ -1444,26 +1444,33 @@ query {
           </p>
           <ul class="timeline">
             <li class="tl">
-              <div class="tl-when">Foundations <span class="tag">underway</span></div>
+              <div class="tl-when">Foundations <span class="tag">done</span></div>
               <p>
                 Event-sourced graph store, an OpenTelemetry-aligned entity
-                model, OTLP ingestion, real-time subscriptions, and the GraphQL
-                + MCP read surfaces.
+                model, OTLP ingestion, real-time subscriptions, the GraphQL +
+                MCP read surfaces, a debug UI, and a public demo scenario.
               </p>
             </li>
             <li class="tl">
-              <div class="tl-when">Breadth &amp; first demo <span class="tag">next</span></div>
+              <div class="tl-when">Production-readiness &amp; multi-tenancy <span class="tag">done</span></div>
               <p>
-                A broader ecosystem of OpenTelemetry producers, a debug UI, and
-                a public demo scenario walking an entity through a day of
-                change.
+                Bearer-token auth with per-tenant authorization, TLS, multi-tenant
+                isolation, operational endpoints and metrics, retention and
+                snapshots, plus release binaries and a Docker image.
               </p>
             </li>
             <li class="tl">
-              <div class="tl-when">Toward production <span class="tag">2027</span></div>
+              <div class="tl-when">Time travel &amp; the producer SDK <span class="tag">now</span></div>
               <p>
-                A pilot deployment with an early partner, hardening, and a public
-                release candidate.
+                As-of event-time queries across MCP and GraphQL, impact analysis,
+                and the first public producer SDK with a conformance kit.
+              </p>
+            </li>
+            <li class="tl">
+              <div class="tl-when">Toward 1.0 <span class="tag">next</span></div>
+              <p>
+                A broader ecosystem of OpenTelemetry producers, API
+                stabilisation, and a release candidate.
               </p>
             </li>
             <li class="tl">
@@ -1491,10 +1498,13 @@ query {
             <details>
               <summary>Is Toise ready for production?</summary>
               <p>
-                Not yet. Toise is in early development — the data model and APIs
-                are still stabilising and breaking changes are expected. Phase 1
-                ships no authentication and binds to localhost by default. Follow
-                the roadmap to track progress.
+                Toise is pre-1.0, so the data model and APIs can still change
+                between releases — but it is well past a prototype: bearer-token
+                auth with per-tenant authorization, TLS, multi-tenant isolation,
+                operational endpoints, release binaries and a Docker image all
+                ship today. It binds to localhost by default; auth and TLS are
+                opt-in for exposed deployments. Follow the roadmap to track the
+                path to 1.0.
               </p>
             </details>
             <details>
@@ -1549,9 +1559,10 @@ query {
         <section>
           <h2>Status</h2>
           <p>
-            Toise is in early development. The core architecture, data model,
-            OTLP ingestion, and MCP server are under active design. Expect
-            breaking changes. We are not yet ready for production use. Follow the
+            Toise is alpha and pre-1.0. The engine, OTLP ingestion, GraphQL and
+            MCP surfaces, auth, and multi-tenancy are in place and exercised in
+            real deployments, but the data model and APIs can still change
+            between releases — expect breaking changes until 1.0. Follow the
             project on GitHub or read the roadmap to see where we're heading.
           </p>
         </section>
