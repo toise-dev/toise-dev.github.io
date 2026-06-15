@@ -1340,7 +1340,7 @@ query {
               <code>find_entities</code><span>filter by type and attributes</span>
             </div>
             <div class="tool">
-              <code>get_entity</code><span>fetch one entity by id</span>
+              <code>get_entity</code><span>fetch one entity by id, with operator annotations</span>
             </div>
             <div class="tool">
               <code>get_neighbors</code><span>traverse relationships, depth-bounded</span>
@@ -1369,7 +1369,17 @@ query {
             <div class="tool">
               <code>describe_schema</code><span>summary + per-type counts to orient the model</span>
             </div>
+            <div class="tool">
+              <code>annotate_entity</code><span>attach operator notes as an overlay — the one write</span>
+            </div>
           </div>
+
+          <p class="lead">
+            Beyond the tools, the server exposes MCP <strong>resources</strong>
+            (the live schema and a per-entity view, pinnable as context) and
+            ready-made <strong>prompts</strong> for common operator workflows
+            (investigate an incident, blast radius, explain an entity).
+          </p>
 
           <ul class="asks">
             <li>"What changed in the network in the last hour?"</li>
@@ -1460,16 +1470,25 @@ query {
               </p>
             </li>
             <li class="tl">
-              <div class="tl-when">Time travel &amp; the producer SDK <span class="tag">now</span></div>
+              <div class="tl-when">Time travel &amp; the producer SDK <span class="tag">done</span></div>
               <p>
                 As-of event-time queries across MCP and GraphQL, impact analysis,
                 and the first public producer SDK with a conformance kit.
               </p>
             </li>
             <li class="tl">
+              <div class="tl-when">Integration &amp; stability <span class="tag">now</span></div>
+              <p>
+                Operator annotations (a <code>get_entity</code> overlay and the
+                first GraphQL mutation), MCP resources and prompts, read-only and
+                ingest-only token roles, a conformance CLI plus a producer
+                directory, and a pinned, documented API surface.
+              </p>
+            </li>
+            <li class="tl">
               <div class="tl-when">Toward 1.0 <span class="tag">next</span></div>
               <p>
-                A broader ecosystem of OpenTelemetry producers, API
+                A broader ecosystem of OpenTelemetry producers, more API
                 stabilisation, and a release candidate.
               </p>
             </li>
