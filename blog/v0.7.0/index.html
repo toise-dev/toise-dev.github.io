@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.7.0 — the integration release</title>
+    <meta
+      name="description"
+      content="Toise 0.7.0 widens what you can build on the graph: operator annotations, MCP resources and prompts, read-only and ingest-only token roles, and a conformance CLI for producers in any language."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.7.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.7.0 — the integration release" />
+    <meta
+      property="og:description"
+      content="Operator annotations, MCP resources and prompts, token roles, and a conformance CLI for producers in any language."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.7.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.7.0 — the integration release</h1>
+        <p class="meta">2026-06-16</p>
+
+        <p class="lead">
+          0.7.0 is about what you can build <em>on</em> Toise. An AI assistant
+          gets pinnable context and ready-made workflows, operators can annotate
+          the graph, a dashboard can hold a token that can never write, and a
+          producer in any language can prove it is on-spec before it ships.
+        </p>
+
+        <p>
+          It also lands the identity hardening — entities that resurrect keep
+          their logical id, and connection topology resolves peers at read time —
+          and the audit P1/P2 lot. It is not a wire-contract break and needs no
+          data migration; one MCP argument was renamed (see the migration guide).
+        </p>
+
+        <h2>Operator annotations</h2>
+        <p>
+          A new MCP tool <code>annotate_entity</code> and the first GraphQL
+          mutation <code>annotateEntity</code> let a human or an assistant attach
+          free-form notes — owner, runbook, ticket — to an entity. Annotations
+          are an <strong>overlay</strong>: kept in a per-tenant sidecar, surfaced
+          on <code>get_entity</code> and <code>Entity.annotations</code>, and
+          never mixed into producer truth or the event log. They are the one
+          write either read surface exposes.
+        </p>
+
+        <h2>Resources and prompts for your assistant</h2>
+        <p>
+          Beyond the twelve tools, the MCP server now exposes
+          <strong>resources</strong> a client can pin as context —
+          <code>toise://schema</code>, <code>toise://guide</code>, and the
+          <code>toise://entity/{id}</code> template — and ready-made
+          <strong>prompts</strong> for common operator tasks:
+          <code>investigate_incident</code>, <code>blast_radius</code>,
+          <code>explain_entity</code>, <code>whats_changed</code>.
+        </p>
+
+        <h2>Least-privilege token roles</h2>
+        <p>
+          Bearer tokens can now be <strong>read-only</strong> (the query surfaces
+          only — a dashboard or assistant that must never write) or
+          <strong>ingest-only</strong> (OTLP only — a producer that must never
+          read), alongside full tokens. A read-only token is refused on
+          <code>annotate_entity</code>.
+        </p>
+
+        <h2>Prove a producer on-spec, in any language</h2>
+        <p>
+          The new <code>toise-conformance</code> CLI validates a producer's OTLP
+          entity-event output against the wire contract without a running Toise —
+          pipe it the bytes you would export:
+        </p>
+        <pre><code>go install github.com/toise-dev/toise/pkg/emit/cmd/toise-conformance@latest
+my-producer --dump-otlp | toise-conformance      # exit 0 = conformant</code></pre>
+        <p>
+          A new <a href="/docs/latest/producers/">producer directory</a> catalogs
+          the SDK, the example producers, and external ones. And the whole MCP
+          surface — tools, resources, prompts — is now pinned by a golden contract
+          test and a published
+          <a href="/docs/latest/api-stability/">API stability policy</a>.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>docker pull ghcr.io/toise-dev/toise:v0.7.0</code></pre>
+        <p>
+          Binaries are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.7.0">release</a>,
+          and the producer SDK ships as <code>pkg/emit/v0.2.0</code>. See the
+          <a href="/docs/0.7.0/">0.7.0 docs</a>, the
+          <a href="https://github.com/toise-dev/toise/blob/main/docs/migration/0.6-to-0.7.md">migration guide</a>,
+          and the <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
