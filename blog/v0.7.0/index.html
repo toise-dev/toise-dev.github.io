@@ -232,6 +232,22 @@ my-producer --dump-otlp | toise-conformance      # exit 0 = conformant</code></p
 
         <hr />
 
+        <h2>Who talks to whom</h2>
+        <p>
+          The relational context an assistant needs most is dependency: not just
+          <em>what runs where</em>, but <em>what depends on what</em>. 0.7.0 lands
+          connection topology for it. A producer reads the host socket table and
+          asserts a durable <code>depends_on</code> edge to the observable endpoint
+          it connects to (<code>address:port</code>); Toise resolves that endpoint
+          to the canonical remote listener or host at read time — a derived overlay,
+          never written into the log, so the stored fact stays exactly what the
+          producer could observe. <code>get_neighbors</code> then answers both
+          <em>what does this service depend on?</em> and, by incoming traversal,
+          <em>who connects to it?</em>
+        </p>
+
+        <hr />
+
         <h2>Get it</h2>
         <pre><code>docker pull ghcr.io/toise-dev/toise:v0.7.0</code></pre>
         <p>
