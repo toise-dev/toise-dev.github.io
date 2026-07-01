@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.9.0 — strict spec alignment and read-surface security</title>
+    <meta
+      name="description"
+      content="Toise 0.9.0 ingests OpenTelemetry entity descriptions with full fidelity, records why entities are deleted, and decouples ingest authentication from read authentication — all additive, with the zero-config single binary unchanged."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.9.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.9.0 — strict spec alignment and read-surface security" />
+    <meta
+      property="og:description"
+      content="Full AnyValue descriptions, entity delete reasons, mTLS-only ingest decoupled from read tokens — all additive, with the zero-config single binary unchanged."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.9.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.9.0 — strict spec alignment and read-surface security</h1>
+        <p class="meta">2026-07-01</p>
+
+        <p class="lead">
+          Toise still starts the same way: one binary, no config — point your OTLP
+          producers at it and the graph appears. 0.9.0 does not touch that. It
+          sharpens two things instead: the <em>fidelity</em> of what Toise records
+          from the OpenTelemetry entity-events wire, and the <em>control</em> you
+          have over who authenticates on which surface. Everything is additive.
+        </p>
+
+        <p>
+          This is a small, precise release. Its point is that the graph an LLM
+          reads should be a faithful mirror of what your producers actually
+          reported — no quietly dropped structure, no lost intent — and that
+          exposing the read surfaces should not force a posture onto ingest. It is
+          not a wire-contract break and needs no data migration; a 0.8 deployment
+          upgrades in place.
+        </p>
+
+        <h2>Faithful to the entity-events spec</h2>
+        <p>
+          The OpenTelemetry spec types <code>entity.description</code> as an
+          <code>AnyValue</code> — scalars, arrays, or nested maps. Earlier Toise
+          kept only the four scalar kinds and dropped the rest. 0.9.0 ingests the
+          <strong>full AnyValue</strong> end to end (ingest, store, projection,
+          GraphQL and MCP): an array or a nested map survives intact and renders on
+          read as compact JSON tagged <code>array</code> / <code>kvlist</code>.
+          <strong>Identity stays scalar</strong> by contract — exact-match identity
+          is over scalar strings, so <code>entity.id</code> is still a flat map and
+          a nested value there is surfaced, never hashed.
+        </p>
+        <p>
+          Two more alignments round it out. A delete can now carry
+          <strong><code>entity.delete.reason</code></strong> — an open enum
+          (<code>terminated</code>, <code>expired</code>, <code>evicted</code>, …,
+          never checked against a closed set) — captured, persisted, and surfaced on
+          <code>recent_changes</code>, <code>graph_diff</code>, and the GraphQL
+          <code>ChangeEvent.deleteReason</code>, so a consumer can tell a graceful
+          shutdown from an eviction. And <strong><code>entity.report.interval == 0</code>
+          (or absent) now means "no cadence"</strong>: such an entity is removed only
+          by an explicit <code>entity.delete</code>, never expired by the liveness
+          sweep — a distinction now locked by a conformance test.
+        </p>
+
+        <h2>Decoupled ingest and read authentication</h2>
+        <p>
+          Until now, configuring any token armed <em>both</em> surfaces: protecting
+          GraphQL and MCP with tokens also made OTLP ingest demand a bearer. But
+          when producers already authenticate by <strong>mutual TLS</strong>, that
+          bearer is redundant. The new opt-in <code>ingest_mtls_only</code>
+          (<code>TOISE_INGEST_MTLS_ONLY</code>, requires a client-CA) separates the
+          two: ingest is authenticated by the verified client certificate alone,
+          while the read surfaces keep requiring their per-client scoped tokens
+          (role read / full, individually revocable) or OIDC. Off by default; the
+          bearer-on-ingest posture is unchanged.
+        </p>
+
+        <h2>Also — a reconciliation fix and a security bump</h2>
+        <p>
+          Out-of-order edges are parked until their endpoint arrives. If the
+          endpoint reappeared on a slower cadence than the buffer window — a host
+          re-announced every few minutes while the buffer expired in seconds — the
+          edge could be dropped just before its next heartbeat, leaving a
+          service momentarily detached from its host. 0.9.0 holds a parked edge for
+          at least one of the source's re-emit cycles, so the endpoint's next
+          heartbeat attaches it; the hold auto-scales from the reported interval.
+          Separately, the Go toolchain is pinned to <strong>1.26.4</strong>,
+          clearing three reachable standard-library advisories.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.9.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.9.0">release</a>,
+          each with a checksum. See the
+          <a href="/docs/0.9.0/">0.9.0 docs</a>, the
+          <a href="https://github.com/toise-dev/toise/blob/main/docs/migration/0.8-to-0.9.md">0.8 → 0.9 migration guide</a>,
+          and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+          Producers using the SDK can pick up the new fidelity with
+          <code>pkg/emit/v0.3.0</code>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
