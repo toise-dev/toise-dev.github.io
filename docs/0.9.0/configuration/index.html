@@ -1,0 +1,2044 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Toise — the living map of your infrastructure. Documentation: install and run toise-server, ingest OTLP entity events, and query the graph via GraphQL, MCP, and the debug UI.">
+      
+      
+      
+        <link rel="canonical" href="https://toise.dev/docs/0.9.0/configuration/">
+      
+      
+        <link rel="prev" href="../installation/">
+      
+      
+        <link rel="next" href="../ingestion/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Configuration - Toise</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://toise.dev/" title="Toise" class="md-header__button md-logo" aria-label="Toise" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Toise
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/toise-dev/toise" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    toise-dev/toise
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://toise.dev/" title="Toise" class="md-nav__button md-logo" aria-label="Toise" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    Toise
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/toise-dev/toise" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    toise-dev/toise
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication &amp; TLS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hardening-for-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hardening for production
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-tenancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-tenancy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational endpoints
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingesting data (OTLP)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../write-a-producer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write a producer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../producers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Producer directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Querying the graph
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Querying the graph
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../querying/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../querying/graphql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../querying/mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP for AI assistants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../querying/debug-ui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug UI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API stability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/saas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment tiers & SaaS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/backups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/storage-sizing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage sizing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    What's new
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/0.9.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.9.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/0.8.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.8.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/0.7.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.7.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/0.6.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.6.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/0.5.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/0.4.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/0.3.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.3.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/0.2.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.2.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication &amp; TLS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hardening-for-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hardening for production
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-tenancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-tenancy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational endpoints
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/toise-dev/toise/edit/main/docs/user-guide/docs/configuration.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h1>
+<p><code>toise-server</code> resolves its configuration from four layers. From <strong>lowest to
+highest precedence</strong>:</p>
+<ol>
+<li><strong>Built-in defaults</strong> — loopback listeners, <code>toise-data</code> data dir, no
+   retention cap. Running with nothing set behaves exactly as the historical
+   flag defaults.</li>
+<li><strong>YAML file</strong> — <code>--config &lt;path&gt;</code> or the <code>TOISE_CONFIG</code> environment variable.</li>
+<li><strong>Environment variables</strong> — <code>TOISE_*</code>. Override the file. <strong>Secrets belong
+   here</strong> (never on the command line).</li>
+<li><strong>Command-line flags</strong> — override everything; useful for ad-hoc overrides.</li>
+</ol>
+<p>Each layer overrides only what it sets, so you can keep a committed base file and
+override one value with an env var or a flag for a one-off run. See
+<a href="https://github.com/toise-dev/toise/blob/main/docs/architecture/adr/0023-layered-configuration.md">ADR 0023</a>
+for the rationale.</p>
+<h2 id="settings">Settings<a class="headerlink" href="#settings" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>YAML key</th>
+<th>Env var</th>
+<th>Flag</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>listen</code></td>
+<td><code>TOISE_LISTEN</code></td>
+<td><code>--listen</code></td>
+<td><code>127.0.0.1:8080</code></td>
+<td>GraphQL/HTTP + MCP + debug UI address</td>
+</tr>
+<tr>
+<td><code>otlp_listen</code></td>
+<td><code>TOISE_OTLP_LISTEN</code></td>
+<td><code>--otlp-listen</code></td>
+<td><code>127.0.0.1:4317</code></td>
+<td>OTLP/gRPC ingestion address</td>
+</tr>
+<tr>
+<td><code>data_dir</code></td>
+<td><code>TOISE_DATA_DIR</code></td>
+<td><code>--data-dir</code></td>
+<td><code>toise-data</code></td>
+<td>Pebble event-log directory</td>
+</tr>
+<tr>
+<td><code>relation_buffer_ttl</code></td>
+<td><code>TOISE_RELATION_BUFFER_TTL</code></td>
+<td><code>--relation-buffer-ttl</code></td>
+<td><code>30s</code></td>
+<td>hold an out-of-order edge waiting for its endpoints (<code>0</code> = disabled)</td>
+</tr>
+<tr>
+<td><code>liveness_sweep_interval</code></td>
+<td><code>TOISE_LIVENESS_SWEEP_INTERVAL</code></td>
+<td><code>--liveness-sweep-interval</code></td>
+<td><code>30s</code></td>
+<td>how often to expire entities past their heartbeat interval (<code>0</code> = disabled)</td>
+</tr>
+<tr>
+<td><code>retention_max_age</code></td>
+<td><code>TOISE_RETENTION_MAX_AGE</code></td>
+<td><code>--retention-max-age</code></td>
+<td><code>0</code></td>
+<td>max age of retained events (<code>0</code> = unlimited)</td>
+</tr>
+<tr>
+<td><code>retention_compaction_interval</code></td>
+<td><code>TOISE_RETENTION_COMPACTION_INTERVAL</code></td>
+<td><code>--retention-compaction-interval</code></td>
+<td><code>1h</code></td>
+<td>heartbeat-coalescing compaction cadence</td>
+</tr>
+<tr>
+<td><code>snapshot_interval</code></td>
+<td><code>TOISE_SNAPSHOT_INTERVAL</code></td>
+<td><code>--snapshot-interval</code></td>
+<td><code>5m</code></td>
+<td>projection snapshot cadence for fast restart and liveness survival across restarts (<code>0</code> = disabled)</td>
+</tr>
+<tr>
+<td><code>backup_dir</code></td>
+<td><code>TOISE_BACKUP_DIR</code></td>
+<td><code>--backup-dir</code></td>
+<td>(empty)</td>
+<td>directory for periodic online backups (with <code>backup_interval</code>); empty = off (ADR 0029)</td>
+</tr>
+<tr>
+<td><code>backup_interval</code></td>
+<td><code>TOISE_BACKUP_INTERVAL</code></td>
+<td><code>--backup-interval</code></td>
+<td><code>0</code></td>
+<td>interval between online backups of every tenant's event log (<code>0</code> = off)</td>
+</tr>
+<tr>
+<td><code>log_shipping_dir</code></td>
+<td><code>TOISE_LOG_SHIPPING_DIR</code></td>
+<td><code>--log-shipping-dir</code></td>
+<td>(empty)</td>
+<td>directory to ship event-log segments to (with <code>log_shipping_interval</code>); may be a mounted bucket/NFS; empty = off (ADR 0029)</td>
+</tr>
+<tr>
+<td><code>log_shipping_interval</code></td>
+<td><code>TOISE_LOG_SHIPPING_INTERVAL</code></td>
+<td><code>--log-shipping-interval</code></td>
+<td><code>0</code></td>
+<td>interval between event-log segment ships of every tenant (<code>0</code> = off)</td>
+</tr>
+<tr>
+<td><code>log_shipping_s3_bucket</code></td>
+<td><code>TOISE_LOG_SHIPPING_S3_BUCKET</code></td>
+<td>—</td>
+<td>(empty)</td>
+<td>ship segments to this S3 bucket instead of a directory (selects S3 mode); AWS S3 or any S3-compatible store (ADR 0029)</td>
+</tr>
+<tr>
+<td><code>log_shipping_s3_endpoint</code></td>
+<td><code>TOISE_LOG_SHIPPING_S3_ENDPOINT</code></td>
+<td>—</td>
+<td>(empty)</td>
+<td>S3 endpoint <code>host[:port]</code>, no scheme (e.g. <code>s3.amazonaws.com</code>, <code>minio.internal:9000</code>)</td>
+</tr>
+<tr>
+<td><code>log_shipping_s3_region</code></td>
+<td><code>TOISE_LOG_SHIPPING_S3_REGION</code></td>
+<td>—</td>
+<td>(empty)</td>
+<td>optional S3 region; ignored by many compatible stores</td>
+</tr>
+<tr>
+<td><code>log_shipping_s3_prefix</code></td>
+<td><code>TOISE_LOG_SHIPPING_S3_PREFIX</code></td>
+<td>—</td>
+<td>(empty)</td>
+<td>optional key prefix under the bucket</td>
+</tr>
+<tr>
+<td><code>log_shipping_s3_use_ssl</code></td>
+<td><code>TOISE_LOG_SHIPPING_S3_USE_SSL</code></td>
+<td>—</td>
+<td><code>true</code></td>
+<td>use HTTPS to the endpoint</td>
+</tr>
+<tr>
+<td>(secret)</td>
+<td><code>TOISE_LOG_SHIPPING_S3_ACCESS_KEY</code></td>
+<td>—</td>
+<td>(empty)</td>
+<td>S3 access key — env-only (never config file or flag)</td>
+</tr>
+<tr>
+<td>(secret)</td>
+<td><code>TOISE_LOG_SHIPPING_S3_SECRET_KEY</code></td>
+<td>—</td>
+<td>(empty)</td>
+<td>S3 secret key — env-only</td>
+</tr>
+<tr>
+<td><code>identity_confidence_threshold</code></td>
+<td><code>TOISE_IDENTITY_CONFIDENCE_THRESHOLD</code></td>
+<td><code>--identity-confidence-threshold</code></td>
+<td><code>0.9</code></td>
+<td><code>same_as</code> confidence (0,1] at/above which an alias joins an entity's canonical view on <code>get_entity</code> (ADR 0020); read-time only, never merges storage</td>
+</tr>
+<tr>
+<td><code>log_format</code></td>
+<td><code>TOISE_LOG_FORMAT</code></td>
+<td><code>--log-format</code></td>
+<td><code>text</code></td>
+<td>log output format: <code>text</code> or <code>json</code></td>
+</tr>
+<tr>
+<td><code>log_level</code></td>
+<td><code>TOISE_LOG_LEVEL</code></td>
+<td><code>--log-level</code></td>
+<td><code>info</code></td>
+<td><code>debug</code>, <code>info</code>, <code>warn</code>, or <code>error</code></td>
+</tr>
+<tr>
+<td><code>production</code></td>
+<td><code>TOISE_PRODUCTION</code></td>
+<td><code>--production</code></td>
+<td><code>false</code></td>
+<td>hardening profile — forces the three below off</td>
+</tr>
+<tr>
+<td><code>graphql_introspection</code></td>
+<td><code>TOISE_GRAPHQL_INTROSPECTION</code></td>
+<td><code>--graphql-introspection</code></td>
+<td><code>true</code></td>
+<td>expose GraphQL introspection</td>
+</tr>
+<tr>
+<td><code>playground</code></td>
+<td><code>TOISE_PLAYGROUND</code></td>
+<td><code>--playground</code></td>
+<td><code>true</code></td>
+<td>serve the GraphQL playground at <code>/playground</code></td>
+</tr>
+<tr>
+<td><code>debug_ui</code></td>
+<td><code>TOISE_DEBUG_UI</code></td>
+<td><code>--debug-ui</code></td>
+<td><code>true</code></td>
+<td>serve the debug UI at <code>/</code></td>
+</tr>
+<tr>
+<td><code>allowed_origins</code></td>
+<td><code>TOISE_ALLOWED_ORIGINS</code></td>
+<td><code>--allowed-origins</code></td>
+<td>(empty)</td>
+<td>comma-separated browser Origin allowlist (WebSocket/CORS); empty = same-origin only</td>
+</tr>
+<tr>
+<td><code>auth_tokens</code></td>
+<td><code>TOISE_AUTH_TOKENS</code></td>
+<td><em>(none — secret)</em></td>
+<td>(empty)</td>
+<td>comma-separated bearer tokens, <strong>full role</strong> (read + ingest), valid for every tenant; empty = auth disabled</td>
+</tr>
+<tr>
+<td><code>read_tokens</code></td>
+<td><code>TOISE_READ_TOKENS</code></td>
+<td><em>(none — secret)</em></td>
+<td>(empty)</td>
+<td>bearer tokens valid only on the <strong>read</strong> surfaces (GraphQL, MCP, debug UI) — rejected on OTLP ingest</td>
+</tr>
+<tr>
+<td><code>ingest_tokens</code></td>
+<td><code>TOISE_INGEST_TOKENS</code></td>
+<td><em>(none — secret)</em></td>
+<td>(empty)</td>
+<td>bearer tokens valid only on <strong>OTLP ingest</strong> — rejected on the read surfaces</td>
+</tr>
+<tr>
+<td><code>tenant_tokens</code></td>
+<td><code>TOISE_TENANT_TOKENS</code></td>
+<td><em>(none — secret)</em></td>
+<td>(empty)</td>
+<td>comma-separated <code>tenant:token</code> pairs — full role, authorized only for its tenant (HTTP 403 / gRPC PermissionDenied elsewhere)</td>
+</tr>
+<tr>
+<td><code>tenant_read_tokens</code></td>
+<td><code>TOISE_TENANT_READ_TOKENS</code></td>
+<td><em>(none — secret)</em></td>
+<td>(empty)</td>
+<td><code>tenant:token</code> pairs — <strong>read-only</strong> role, that tenant's read surfaces only (per-tenant RBAC, ADR 0028)</td>
+</tr>
+<tr>
+<td><code>tenant_ingest_tokens</code></td>
+<td><code>TOISE_TENANT_INGEST_TOKENS</code></td>
+<td><em>(none — secret)</em></td>
+<td>(empty)</td>
+<td><code>tenant:token</code> pairs — <strong>ingest-only</strong> role, that tenant's OTLP ingest only</td>
+</tr>
+<tr>
+<td><code>accept_unknown_types</code></td>
+<td><code>TOISE_ACCEPT_UNKNOWN_TYPES</code></td>
+<td><code>--accept-unknown-types</code></td>
+<td><code>false</code></td>
+<td>accept entity/relation types outside the built-in registry (shape still validated; counted on /metrics)</td>
+</tr>
+<tr>
+<td><code>tenant_auto_create</code></td>
+<td><code>TOISE_TENANT_AUTO_CREATE</code></td>
+<td><code>--tenant-auto-create</code></td>
+<td><code>true</code></td>
+<td>allow a first write to a new tenant id to create its stack; off = only pre-existing tenants (and <code>default</code>) are served</td>
+</tr>
+<tr>
+<td><code>tenant_allowlist</code></td>
+<td><code>TOISE_TENANT_ALLOWLIST</code></td>
+<td><code>--tenant-allowlist</code></td>
+<td>(empty)</td>
+<td>comma-separated tenant ids allowed to be created; empty = any (subject to auto-create and the cap)</td>
+</tr>
+<tr>
+<td><code>max_tenants</code></td>
+<td><code>TOISE_MAX_TENANTS</code></td>
+<td><code>--max-tenants</code></td>
+<td><code>0</code></td>
+<td>cap on open tenants; <code>0</code> = unbounded. Reading an unknown tenant never creates it (404)</td>
+</tr>
+<tr>
+<td><code>tenant_trust_mode</code></td>
+<td><code>TOISE_TENANT_TRUST_MODE</code></td>
+<td><code>--tenant-trust-mode</code></td>
+<td><code>trust-header</code></td>
+<td>how a request's tenant is decided. <code>trust-header</code>: from <code>X-Scope-OrgID</code> / <code>tenant.id</code> (the edge is trusted). <code>derive-only</code>: a tenant-scoped token's tenant is <strong>derived from its binding</strong> and any client-supplied <code>X-Scope-OrgID</code> / <code>tenant.id</code> is <strong>ignored</strong> (anti-spoofing for multi-tenant SaaS, ADR 0028); global (operator) tokens keep header-based cross-tenant selection</td>
+</tr>
+<tr>
+<td><code>tls_cert_file</code></td>
+<td><code>TOISE_TLS_CERT_FILE</code></td>
+<td><code>--tls-cert-file</code></td>
+<td>(empty)</td>
+<td>PEM certificate; with the key, serves HTTP + OTLP over TLS</td>
+</tr>
+<tr>
+<td><code>tls_key_file</code></td>
+<td><code>TOISE_TLS_KEY_FILE</code></td>
+<td><code>--tls-key-file</code></td>
+<td>(empty)</td>
+<td>PEM private key (pairs with the cert)</td>
+</tr>
+<tr>
+<td><code>tls_client_ca_file</code></td>
+<td><code>TOISE_TLS_CLIENT_CA_FILE</code></td>
+<td><code>--tls-client-ca-file</code></td>
+<td>(empty)</td>
+<td>PEM CA bundle; when set, requires + verifies a client certificate on <strong>OTLP ingest</strong> (mTLS, ADR 0028) — needs TLS; the HTTP surfaces are unaffected</td>
+</tr>
+<tr>
+<td><code>ingest_mtls_only</code></td>
+<td><code>TOISE_INGEST_MTLS_ONLY</code></td>
+<td><code>--ingest-mtls-only</code></td>
+<td><code>false</code></td>
+<td>authenticate OTLP ingest by <strong>mutual TLS alone</strong> (no bearer required or consulted on ingest) while the read surfaces keep requiring their scoped tokens / OIDC; decouples ingest auth from read auth (ADR 0028). Requires <code>tls_client_ca_file</code></td>
+</tr>
+<tr>
+<td><code>audit_log</code></td>
+<td><code>TOISE_AUDIT_LOG</code></td>
+<td><code>--audit-log</code></td>
+<td>(empty)</td>
+<td>path to an append-only JSON-line audit file for operator writes (<code>annotate_entity</code>), per tenant; empty = off (ADR 0028)</td>
+</tr>
+<tr>
+<td><code>oidc_issuer</code></td>
+<td><code>TOISE_OIDC_ISSUER</code></td>
+<td><code>--oidc-issuer</code></td>
+<td>(empty)</td>
+<td>OIDC issuer URL; when set, JWT bearers are verified on the read surfaces (discovery + JWKS). Empty = OIDC off (ADR 0028)</td>
+</tr>
+<tr>
+<td><code>oidc_audience</code></td>
+<td><code>TOISE_OIDC_AUDIENCE</code></td>
+<td><code>--oidc-audience</code></td>
+<td>(empty)</td>
+<td>expected JWT <code>aud</code></td>
+</tr>
+<tr>
+<td><code>oidc_tenant_claim</code></td>
+<td><code>TOISE_OIDC_TENANT_CLAIM</code></td>
+<td><code>--oidc-tenant-claim</code></td>
+<td><code>tenant</code></td>
+<td>JWT claim carrying the tenant id</td>
+</tr>
+<tr>
+<td><code>oidc_role_claim</code></td>
+<td><code>TOISE_OIDC_ROLE_CLAIM</code></td>
+<td><code>--oidc-role-claim</code></td>
+<td>(empty)</td>
+<td>JWT claim carrying the role (<code>read</code>/<code>ingest</code>/<code>full</code>); empty = every valid token is full</td>
+</tr>
+</tbody>
+</table>
+<p>Durations are Go-duration strings (<code>"30s"</code>, <code>"5m"</code>, <code>"1h30m"</code>). <strong>Unknown YAML
+keys are rejected</strong> — a typo fails at startup rather than being silently ignored.</p>
+<p><code>--mcp-stdio</code> (serve only the MCP server over stdio, for Claude Desktop) is a run
+mode rather than steady-state config; pass it as a flag when needed — see
+<a href="../querying/mcp/">MCP for AI assistants</a>.</p>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<p>A complete annotated file lives at
+<a href="https://github.com/toise-dev/toise/blob/main/examples/toise-server.yaml"><code>examples/toise-server.yaml</code></a>.
+A minimal one:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">listen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0.0.0:8080</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">otlp_listen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0.0.0:4317</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">data_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/toise</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nt">retention_max_age</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">720h</span><span class="w">   </span><span class="c1"># 30 days</span>
+</code></pre></div>
+<p>Run it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>toise-server<span class="w"> </span>--config<span class="w"> </span>/etc/toise/toise-server.yaml
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># or</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nv">TOISE_CONFIG</span><span class="o">=</span>/etc/toise/toise-server.yaml<span class="w"> </span>toise-server
+</code></pre></div>
+<p>Override one value for a single run without editing the file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># env wins over the file...</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">TOISE_DATA_DIR</span><span class="o">=</span>/tmp/scratch<span class="w"> </span>toise-server<span class="w"> </span>--config<span class="w"> </span>/etc/toise/toise-server.yaml
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># ...and a flag wins over both</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>toise-server<span class="w"> </span>--config<span class="w"> </span>/etc/toise/toise-server.yaml<span class="w"> </span>--listen<span class="w"> </span><span class="m">127</span>.0.0.1:9999
+</code></pre></div>
+<h2 id="authentication-tls">Authentication &amp; TLS<a class="headerlink" href="#authentication-tls" title="Permanent link">&para;</a></h2>
+<p>Both are <strong>off by default</strong> — the server binds to <code>127.0.0.1</code> and trusts the
+network (private datacenter segment or VPN; ADR 0014). Exposing it to other hosts
+(<code>0.0.0.0:...</code>) is an explicit choice; when you make it, turn these on.</p>
+<ul>
+<li><strong>Bearer tokens.</strong> Set <code>auth_tokens</code> via the environment only — they are secrets
+  and must never appear on the command line or in a committed file:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">TOISE_AUTH_TOKENS</span><span class="o">=</span><span class="s2">&quot;tok-a,tok-b&quot;</span><span class="w"> </span>toise-server<span class="w"> </span>--config<span class="w"> </span>/etc/toise/toise-server.yaml
+</code></pre></div>
+<p>Clients then send <code>Authorization: Bearer &lt;token&gt;</code> on both HTTP and gRPC. The
+  operational probes (<code>/healthz</code>, <code>/readyz</code>) and the metrics scrape (<code>/metrics</code>)
+  stay public so a load balancer and Prometheus can reach them without a token.
+  Configured tokens are <strong>hashed at rest</strong> (SHA-256): the server holds only the
+  hashes, never the plaintext, so a heap dump never yields a usable token
+  (ADR 0028). Matching is constant-time. Rotation is operational — add the new
+  token alongside the old, then drop the old one; revocation is removing a token
+  and reloading.
+- <strong>Token roles (least privilege).</strong> <code>auth_tokens</code> are full (read + ingest). Use
+  <code>read_tokens</code> for a token that may query but never ingest (a dashboard, an
+  assistant), and <code>ingest_tokens</code> for a producer that may ingest but never read.
+  A read-only token is rejected on OTLP ingest; an ingest-only token is rejected
+  on GraphQL/MCP/debug. These roles are global (every tenant). For <strong>per-tenant
+  RBAC</strong>, the same roles exist scoped to one tenant: <code>tenant_tokens</code> (full),
+  <code>tenant_read_tokens</code> (read-only), <code>tenant_ingest_tokens</code> (ingest-only) — each a
+  <code>tenant:token</code> pair authorized only for its tenant and surface (ADR 0028).
+- <strong>TLS.</strong> Point <code>tls_cert_file</code> and <code>tls_key_file</code> at a PEM cert/key pair to serve
+  the HTTP surfaces and OTLP ingestion over TLS.
+- <strong>mTLS on ingest (optional).</strong> Set <code>tls_client_ca_file</code> to a PEM CA bundle to
+  require and verify a client certificate on the OTLP ingest listener — for
+  regulated producers, on top of the bearer token. It applies to ingest only; the
+  HTTP read surfaces keep bearer/OIDC auth. Requires TLS to be enabled (ADR 0028).
+- <strong>Audit log.</strong> Set <code>audit_log</code> to a file path to record an append-only JSON-line
+  entry for every operator write (<code>annotate_entity</code>, on MCP and GraphQL) — the time,
+  tenant, surface, and target entity. It is distinct from the producer event log,
+  exportable, and off by default. A write failure is logged (never silent), and
+  never fails the audited operation (ADR 0028).
+- <strong>OIDC / JWT (read surfaces).</strong> Set <code>oidc_issuer</code> (and <code>oidc_audience</code>) to verify
+  JWT bearers on GraphQL/MCP/debug as a second path after the static tokens: the
+  token is validated against the issuer (discovery + JWKS, signature, audience,
+  expiry), and its <code>oidc_tenant_claim</code> / <code>oidc_role_claim</code> map to a tenant and role.
+  The client <code>X-Scope-OrgID</code> is ignored for a verified JWT (the claim is the
+  authority). Off by default; the static bearer tokens stay the baseline (ADR 0028).</p>
+<p>See <a href="https://github.com/toise-dev/toise/blob/main/docs/architecture/adr/0024-native-auth-and-tls.md">ADR 0024</a>
+and <a href="https://github.com/toise-dev/toise/blob/main/docs/architecture/adr/0028-access-security-for-multi-tenant-saas.md">ADR 0028</a>.</p>
+<h2 id="hardening-for-production">Hardening for production<a class="headerlink" href="#hardening-for-production" title="Permanent link">&para;</a></h2>
+<p>The development surfaces — GraphQL introspection, the <code>/playground</code>, and the debug
+UI — are on by default for a friendly local experience. For an exposed deployment,
+turn them off with a single switch:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>toise-server<span class="w"> </span>--production<span class="w">        </span><span class="c1"># or production: true / TOISE_PRODUCTION=true</span>
+</code></pre></div>
+<p><code>production: true</code> forces <code>graphql_introspection</code>, <code>playground</code>, and <code>debug_ui</code>
+off, winning over any individual setting. Set <code>allowed_origins</code> to the browser
+Origins permitted for WebSocket subscriptions and CORS (empty = same-origin only).</p>
+<h2 id="multi-tenancy">Multi-tenancy<a class="headerlink" href="#multi-tenancy" title="Permanent link">&para;</a></h2>
+<p>One Toise instance can serve multiple tenants with <strong>fully isolated</strong> graphs — a
+query scoped to tenant A never sees tenant B (ADR 0025). Each tenant gets its own
+store + projection + change engine under <code>&lt;data_dir&gt;/&lt;tenant&gt;/</code>.</p>
+<p>The tenant id is generic and vendor-neutral, resolved (in order) from:</p>
+<ol>
+<li>the <strong><code>X-Scope-OrgID</code></strong> request metadata — the de-facto standard used by
+   Mimir/Loki/Tempo/VictoriaMetrics (an HTTP header on the query surfaces, gRPC
+   metadata on OTLP ingest);</li>
+<li>a <strong><code>tenant.id</code></strong> resource attribute on the OTLP request (set per
+   <code>ResourceLogs</code>, it overrides the request metadata — so one OTLP stream can carry
+   several tenants);</li>
+<li>otherwise the <strong><code>default</code></strong> tenant.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Query tenant &quot;acme&quot; over HTTP</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s1">&#39;X-Scope-OrgID: acme&#39;</span><span class="w"> </span>http://127.0.0.1:8080/graphql<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;query&quot;:&quot;{ entities { totalCount } }&quot;}&#39;</span>
+</code></pre></div>
+<p><strong>Single-tenant deployments need no configuration:</strong> with no tenant id ever set,
+everything lives under <code>default</code> and behaves as a single-graph build. A
+pre-existing data directory is migrated to <code>&lt;data_dir&gt;/default/</code> automatically on
+first start (take a backup first, as with any upgrade). <code>/metrics</code> reports the sum
+across tenants, so existing dashboards are unchanged.</p>
+<p><strong>Boot quarantine:</strong> if a tenant's store cannot be opened at startup (a corrupt
+or half-written store), the server <strong>does not abort</strong> — it logs a warning, skips
+that tenant, counts it in the <code>toise_tenants_quarantined</code> gauge, and serves the
+healthy tenants. The <code>default</code> tenant is the exception: it is required, so its
+failure is fatal. A quarantined tenant's directory is left on disk under
+<code>&lt;data_dir&gt;/&lt;tenant&gt;/</code> for recovery; restore or remove it and restart.</p>
+<p><strong>Deleting a tenant</strong> is a cold, destructive operation — run it with the server
+stopped (it holds the pebble lock while serving):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>toise-server<span class="w"> </span>delete-tenant<span class="w"> </span>--data-dir<span class="w"> </span>/var/lib/toise/data<span class="w"> </span>acme
+</code></pre></div>
+<p>It removes <code>&lt;data_dir&gt;/acme/</code> (event log and snapshot) entirely and frees a slot
+under <code>max_tenants</code>. The <code>default</code> tenant cannot be deleted.</p>
+<p><strong>Metrics and tenants:</strong> the Toise gauges on <code>/metrics</code> (<code>toise_entities</code>,
+<code>toise_events_total</code>, <code>toise_store_disk_bytes</code>, …) are <strong>aggregated across
+tenants</strong> — a sum, except <code>toise_snapshot_seq</code> and <code>toise_store_prune_horizon_seconds</code>
+which report the high-water mark. They carry no per-tenant label, so the endpoint
+stays single-series and dashboards are unchanged. The maintenance metrics
+(<code>toise_maintenance_*</code>) are the exception: they label by <code>tenant</code> (and <code>op</code>,
+<code>outcome</code>) so a stuck sweep/prune can be traced to its tenant.</p>
+<div class="admonition warning">
+<p class="admonition-title">Authentication is not yet bound to a tenant</p>
+<p>A valid bearer token may set any <code>X-Scope-OrgID</code>. Isolation therefore relies on
+the upstream OTel Collector authenticating each client and stamping its tenant;
+do not expose the ports directly to untrusted multi-tenant clients. Per-token
+tenant binding is planned.</p>
+</div>
+<h2 id="operational-endpoints">Operational endpoints<a class="headerlink" href="#operational-endpoints" title="Permanent link">&para;</a></h2>
+<p>Always on, on the <code>listen</code> address: <code>/healthz</code> (liveness), <code>/readyz</code> (readiness —
+green only when every tenant store is healthy), and Prometheus <code>/metrics</code> (sampled
+at scrape time). Wire these into your orchestrator and scrape config.</p>
+<p>See also <a href="../operations/storage-sizing/">Storage sizing</a> for choosing
+<code>retention_max_age</code>, and <a href="../operations/performance/">Performance</a> for the
+sweep/compaction cadences.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../installation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Installation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../ingestion/" class="md-footer__link md-footer__link--next" aria-label="Next: Ingesting data (OTLP)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Ingesting data (OTLP)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2026 Toise contributors · Apache 2.0 · Built by Sensor Factory
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/toise-dev/toise" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://toise.dev" target="_blank" rel="noopener" title="toise.dev" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2m-5.15 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56M14.34 14H9.66c-.1-.66-.16-1.32-.16-2s.06-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2M12 19.96c-.83-1.2-1.5-2.53-1.91-3.96h3.82c-.41 1.43-1.08 2.76-1.91 3.96M8 8H5.08A7.92 7.92 0 0 1 9.4 4.44C8.8 5.55 8.35 6.75 8 8m-2.92 8H8c.35 1.25.8 2.45 1.4 3.56A8 8 0 0 1 5.08 16m-.82-2C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2M12 4.03c.83 1.2 1.5 2.54 1.91 3.97h-3.82c.41-1.43 1.08-2.77 1.91-3.97M18.92 8h-2.95a15.7 15.7 0 0 0-1.38-3.56c1.84.63 3.37 1.9 4.33 3.56M12 2C6.47 2 2 6.5 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "content.code.copy", "content.code.annotate", "content.action.edit", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/dev-banner.js"></script>
+      
+    
+  </body>
+</html>
