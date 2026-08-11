@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.11.0 — vocabulary and correlation</title>
+    <meta
+      name="description"
+      content="Toise 0.11.0 stops an entity from answering with its observer identity when you ask where its metrics are, and exports the entity and relation type vocabulary so producers stop retyping it by hand. Nothing on the wire changes."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.11.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.11.0 — vocabulary and correlation" />
+    <meta
+      property="og:description"
+      content="A correlation answer that was quietly wrong, and the type vocabulary producers can finally import instead of retyping."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.11.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.11.0 — vocabulary and correlation</h1>
+        <p class="meta">2026-08-11</p>
+
+        <p class="lead">
+          A graph is only useful if you can get from a node to its measurements.
+          0.11.0 fixes an answer that was quietly wrong on that path — an entity
+          could hand you somebody else's identity — and gives producers the type
+          vocabulary they were previously obliged to retype by hand. Nothing on the
+          wire changes.
+        </p>
+
+        <p>
+          Both halves come from the same place: a contract that was asserted rather
+          than checked. Neither defect was visible from inside the code that had it,
+          which is the part worth reading even if you do not run Toise.
+        </p>
+
+        <h2>An entity answering with its observer's identity</h2>
+        <p>
+          <code>telemetry_keys</code> derives the labels that locate an entity's
+          metrics and logs. To be useful it walks one hop and inherits from a
+          neighbor: a listening socket has no <code>host.id</code> of its own, it
+          gains its host's through <code>runs_on</code>.
+        </p>
+        <p>
+          It walked <strong>every</strong> relation. For an entity with no key of its
+          own that meant inheriting from whatever happened to touch it. A database
+          observed by a monitoring agent came back carrying <em>that agent's</em>
+          <code>service.name</code>, sourced honestly as "via monitors" — and a
+          consumer that trusted the answer went and queried the wrong machine's
+          telemetry. Not an error anyone would see: a plausible answer about the
+          wrong thing.
+        </p>
+        <p>
+          Inheritance is now restricted to <strong>ownership</strong> hops, and it is
+          directional — a listener gains its host's keys by following
+          <code>runs_on</code> outward, a route gains its device's by following
+          <code>has_route</code> back. Observation and peer relations contribute
+          nothing, because the neighbor there describes something else. Graph
+          traversal is untouched: paths still cross those edges. Only key derivation
+          was at fault.
+        </p>
+        <p>
+          An empty answer now means something too. Some types legitimately have no
+          telemetry — an address or a route is a graph fact, not a measurement — and
+          the tool now says <strong>no key exists</strong> rather than reporting that
+          it found none, which a consumer cannot distinguish from "keep looking".
+        </p>
+
+        <h2>Where the round trip actually holds</h2>
+        <p>
+          The guidance no longer implies a uniform guarantee, because there is not
+          one. On the OTLP rail the round trip is guaranteed. On a Prometheus-family
+          backend it holds only where the collector was configured to flatten
+          resource attributes into labels — a deployment choice, not a property of
+          the wire. On a producer's own scrape endpoint there is no resource at all,
+          so resource-borne keys are simply absent. Saying which rail you are on is
+          the contract; pretending it does not matter is how a join silently returns
+          nothing.
+        </p>
+
+        <h2>The type vocabulary is exported</h2>
+        <p>
+          Entity and relation types were free strings on the producer side. The
+          registered vocabulary lived in an internal package nobody could import, so
+          every producer kept private constants — and one product could spell the
+          same type two ways in two of its own sources with nothing failing. That is
+          not hypothetical: it is how a real mismatch reached production.
+        </p>
+        <p>
+          <code>pkg/emit/wire</code> now exports the whole set — twelve entity types,
+          thirteen relation types, plus accessors to validate a value you did not
+          write yourself. An invented or mistyped type becomes a compile error
+          instead of a batch rejected at runtime. The package stays deliberately
+          stdlib-only, so importing the vocabulary pulls no protocol stack into a
+          producer's module graph.
+        </p>
+        <p>
+          The part that makes it honest: Toise's own registry <strong>derives from
+          those same constants</strong> rather than keeping a parallel copy, and a
+          test compares the two sets in both directions. A type Toise accepts but
+          does not publish would leave producers unable to name it; a type published
+          but not accepted would be refused after a producer trusted it. Neither can
+          ship now. Available as <code>pkg/emit/v0.6.0</code>.
+        </p>
+
+        <h2>Typed attributes were always possible</h2>
+        <p>
+          The SDK carries two descriptive maps that always landed in the same place
+          on the wire: one keeping each value's type, one a shortcut for values that
+          really are strings. The string map was declared first and the typed one
+          documented as "the rarer structured case" — so a producer reading the SDK
+          concluded it could not carry typed values at all, and planned a re-encoding
+          around a limitation that did not exist. A capacity, a frequency or a flag
+          is a number or a boolean; that is the common case. The presentation is now
+          the right way round, and nothing on the wire changed.
+        </p>
+
+        <h2>Who owns what</h2>
+        <p>
+          One line of governance came out of the same round, and it is now in the API
+          stability policy: <strong>each side owns what it can verify.</strong> Toise
+          holds the vocabulary and the wire form; a producer holds the transport and
+          the verification of its own emission. It follows that a producer whose
+          pipeline already owns batching, backpressure, retries and tenant
+          propagation should not adopt the SDK's client at runtime — that would cost
+          it four properties to gain none. Importing the vocabulary, or the encoder
+          inside a differential test that fails the build on drift, gets the
+          guarantee without the coupling.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.11.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.11.0">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.11.0/">0.11.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+          Producers pick up the vocabulary with <code>pkg/emit/v0.6.0</code>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>

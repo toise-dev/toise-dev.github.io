@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.10.0 — delete provenance and host-scoped endpoints</title>
+    <meta
+      name="description"
+      content="Toise 0.10.0 records who authored every disappearance in the change feed — producer, liveness expiry or cascade — and stops loopback endpoints from collapsing across hosts. Additive, with the zero-config single binary unchanged."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.10.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.10.0 — delete provenance and host-scoped endpoints" />
+    <meta
+      property="og:description"
+      content="Delete provenance on every disappearance, host-scoped loopback endpoints, and the producer-contract rules that came out of a real flapping incident."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.10.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.10.0 — delete provenance and host-scoped endpoints</h1>
+        <p class="meta">2026-07-30</p>
+
+        <p class="lead">
+          When something disappears from your infrastructure graph, the first
+          question is always the same: did it go away, or did we stop hearing from
+          it? Until now Toise could not tell you. 0.10.0 records the answer on every
+          disappearance, and stops two machines' loopback services from collapsing
+          into one node. Both changes are additive.
+        </p>
+
+        <p>
+          This release ratifies an alignment round with the reference producer, and
+          most of it comes from a real incident rather than a design session — the
+          kind of round where the interesting output is the rule you write down
+          afterwards. It is not a wire-contract break and needs no data migration:
+          newly written events carry schema version <code>1.1</code>, older events
+          read back unchanged.
+        </p>
+
+        <h2>Who authored the disappearance</h2>
+        <p>
+          Before 0.10.0, an entity expired by the liveness backstop and an entity
+          deleted by its producer were <strong>rigorously indistinguishable</strong>
+          on every read surface, and a removed relation covered three origins with
+          no discriminant at all. That is exactly the question a flapping incident
+          asks: <em>did my agent delete this, or did Toise reap it after a missed
+          heartbeat?</em>
+        </p>
+        <p>
+          Every deletion now carries its author: <code>producer</code> for an
+          explicit delete or an edge dropped by absence on re-emit,
+          <code>liveness_expiry</code> for Toise's own backstop, <code>cascade</code>
+          when an endpoint died and took the edge with it. It surfaces on
+          <code>recent_changes</code>, <code>entity_history</code> and
+          <code>graph_diff</code> — including the transient bucket, which turns the
+          flap surface into a one-call triage — and on GraphQL as
+          <code>ChangeEvent.deleteSource</code>.
+        </p>
+        <p>
+          Two things it deliberately does not do. It never touches
+          <code>delete_reason</code>, which stays the producer's verbatim motive and
+          is never used to derive the source. And events recorded before 0.10.0 read
+          back with an <strong>unknown</strong> source rather than being
+          retroactively labelled <code>producer</code> — a guess written into history
+          is worse than an admitted gap.
+        </p>
+
+        <h2>Two hosts, two loopbacks</h2>
+        <p>
+          An endpoint is identified by what an observer can actually see:
+          <code>{server.address, server.port, network.transport}</code>. That works
+          because two observers dialing the same routable address should land on the
+          same node. For an address whose scope is <strong>narrower than the
+          observation domain</strong>, the same rule tells a lie: every host's
+          <code>127.0.0.1:5432</code> collapsed into a single node shared by the
+          whole fleet.
+        </p>
+        <p>
+          Endpoints in exactly <code>127.0.0.0/8</code>, <code>::1</code>,
+          <code>169.254.0.0/16</code> and <code>fe80::/10</code> now carry the
+          observing host's id as a <strong>fourth identity key</strong>. Everything
+          else — RFC1918 and CGNAT included — keeps the three-key form and its
+          cross-observer join, because a LAN address is shared by construction and
+          that sharing is the point. Resolution honors the scope: a host-scoped
+          endpoint resolves only against its own host's listeners, never through a
+          fleet-wide scan that would re-merge exactly what the fourth key separated.
+        </p>
+
+        <h2>Rules that came out of the incident</h2>
+        <p>
+          A producer was flapping, and the cause was a sizing rule read one level too
+          low. The recommended slack on <code>entity.report.interval</code> applies to
+          the <strong>effective re-emission cadence</strong> — what a consumer can
+          actually observe — not to the internal heartbeat tick. Sizing on the tick
+          gave that producer no tolerance to a single missed re-emission, which is a
+          mechanical flap waiting to happen. The contract now says so.
+        </p>
+        <p>
+          Alongside it: <code>telemetry.relay.*</code> as the vendor-neutral way to
+          say "this telemetry passed through this agent on this host" on relayed
+          spans, first relay winning and the set of three inserted atomically; and
+          address canonicalization frozen, so that a CIDR is explicit-prefix with
+          zeroed host bits and every IPv6 identity is RFC 5952 text.
+        </p>
+
+        <h2>Security</h2>
+        <p>
+          grpc <code>v1.82.1</code> and the Go toolchain <code>1.26.5</code> in both
+          modules, clearing two advisories; <code>govulncheck</code> is symbol-clean.
+          Producers get the same grpc bump through <code>pkg/emit/v0.5.1</code>.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.10.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.10.0">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.10.0/">0.10.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
