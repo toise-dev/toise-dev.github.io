@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.12.0 — the pod</title>
+    <meta
+      name="description"
+      content="Toise 0.12.0 adds a thirteenth entity type for the Kubernetes pod, identified by the UID Kubernetes assigns and composing from the existing vocabulary as container runs_on pod runs_on host. Additive, with the zero-config single binary unchanged."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.12.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.12.0 — the pod" />
+    <meta
+      property="og:description"
+      content="A thirteenth entity type for the unit of scheduling and of failure — and the argument that settled it was telemetry, not taxonomy."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.12.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.12.0 — the pod</h1>
+        <p class="meta">2026-08-11</p>
+
+        <p class="lead">
+          A thirteenth entity type. That sounds like a small thing, and mechanically
+          it is — one constant, no new relation, nothing changed on the wire. What
+          made it interesting is how the decision got made: we argued for it on
+          taxonomy, the producer team said no, and the thing that actually settled
+          it was a measurement nobody could attach anywhere else.
+        </p>
+
+        <h2>Where a pod does not fit</h2>
+        <p>
+          A Kubernetes pod is the unit of scheduling and of failure: one or more
+          containers sharing a network namespace and a lifetime. It is not a
+          container, not a machine, not a service instance. Modelling it as a
+          container would be worse than not modelling it — a pod with three
+          containers would either collide with them or count them three times.
+        </p>
+        <p>
+          So the honest options were two: add a type, or leave the pod out and keep
+          its name as an attribute on each container. The producer team recommended
+          leaving it out, and their reasoning was sound on its face: the pod's only
+          relations would be "contains these containers" and "runs on this node",
+          both already derivable. The cost of a missing node is a query the consumer
+          writes; the cost of a wrong node is a graph nobody trusts.
+        </p>
+
+        <h2>The argument we made, and the better one we got back</h2>
+        <p>
+          We pushed back on the premise. "This container is in that pod", carried as
+          a <em>string attribute on the container</em>, is not a join. It is the same
+          shape that made IP addresses untraversable in this graph until
+          <code>network.address</code> became a node of its own: a value transported
+          next to a thing instead of an edge pointing at it. Answering <em>what else
+          runs in this pod</em> stops being a query and becomes a scan with string
+          comparison. A human can do that. A model has to pull the whole collection
+          first, which is exactly the legibility we are trying not to lose.
+        </p>
+        <p>
+          That argument is right, and it is not the one that decided it. The producer
+          team came back with a better one, taken from a contract they had written
+          themselves a week earlier: <strong>the network namespace is shared per
+          pod</strong>, so pod-scoped network measurements describe the pod and
+          nothing else. Their own rule says a type that owns telemetry needs an
+          entity to attach it to — otherwise those measurements have no subject.
+        </p>
+        <p>
+          We prefer their version. Ours rests on a judgement about what reads well;
+          theirs falls out of a rule already agreed, and nobody has to be persuaded
+          of anything. When a vocabulary decision can be settled by a rule instead of
+          a preference, that is the one to use.
+        </p>
+
+        <h2>What it looks like</h2>
+        <p>
+          The type is <code>pod</code>, identified by the <strong>UID Kubernetes
+          assigns</strong> — never <code>namespace/name</code>, which is mutable and
+          reused. A deployment deleted and recreated under the same name is a
+          different deployment, and the UID says so where the name would lie. It is
+          the same reasoning that stopped databases from collapsing into each other
+          two weeks ago.
+        </p>
+        <p>
+          No new relation type was needed:
+        </p>
+        <pre><code>container --runs_on--&gt; pod --runs_on--&gt; host</code></pre>
+        <p>
+          <code>runs_on</code> already propagates failure from target to source, so a
+          node draining takes its pods, which take their containers — transitively,
+          with no extra code. Asking what a node failing would affect returns the
+          pods and their containers the day the first one arrives. And for a
+          consumer, "what runs in this pod" is one hop.
+        </p>
+
+        <h2>Two versions, and they are not interchangeable</h2>
+        <p>
+          This is the first vocabulary addition since the type set stopped being
+          something producers retype by hand. The constant ships as
+          <code>wire.TypePod</code> in <code>pkg/emit/v0.7.0</code>, and Toise's own
+          registry derives from that same constant.
+        </p>
+        <p>
+          Which creates a sequencing a producer needs to know about: <strong>the SDK
+          tag lets you compile, this release lets you emit.</strong> Toise's boundary
+          refuses types it does not know under the default strict vocabulary, so pods
+          sent to an older instance are rejected per record. The split is not
+          packaging clumsiness — the engine resolves the SDK from its published
+          version, so a constant cannot be registered before it is tagged.
+        </p>
+        <p>
+          It is worth saying that this constraint is the guarantee working. The
+          producer team hit it first: their vocabulary now derives from ours, so
+          <code>pod</code> simply would not compile on their side until we published
+          it. They told us they would not work around it. That is the point of
+          putting the vocabulary in a package both sides compile against.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.12.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.12.0">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.12.0/">0.12.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+          Producers pick up the type with <code>pkg/emit/v0.7.0</code>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
