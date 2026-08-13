@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.13.0 — one answer per question</title>
+    <meta
+      name="description"
+      content="Toise 0.13.0 closes three places where the same question had two answers, or none: the same_as identity overlay reaches GraphQL, host.id gets one normative spelling enforced by the conformance kit, and the db fallback identity is specified. Additive, with the zero-config single binary unchanged."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.13.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.13.0 — one answer per question" />
+    <meta
+      property="og:description"
+      content="Three questions that had two answers, or none — and what it costs when a contract stays silent and a producer fills the gap in good faith."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.13.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.13.0 — one answer per question</h1>
+        <p class="meta">2026-08-13</p>
+
+        <p class="lead">
+          Three places where the same question had two answers, or none. None of
+          them was a bug in the ordinary sense — no crash, no rejected record,
+          nothing a test would have caught. Each was a silence: somewhere the
+          contract did not say, or said it once in a place only half the readers
+          look. What they cost is worth writing down, because the pattern repeats.
+        </p>
+
+        <h2>One: the same machine, spelled two ways</h2>
+        <p>
+          A producer wired up a Kubernetes probe alongside its existing agent. Both
+          read <code>/etc/machine-id</code> to identify the node. Both were correct.
+          They produced two different strings:
+        </p>
+        <pre><code>/etc/machine-id   8b86170405bc4382b0577eac3df5e730
+via the library   8b861704-05bc-4382-b057-7eac3df5e730</code></pre>
+        <p>
+          Same file, same bytes, one formatted as a UUID and one not. Toise matches
+          identity byte for byte and never guesses, so that is two hosts — one
+          duplicate per node, per cluster, permanently, with nothing in the graph
+          saying they are the same machine.
+        </p>
+        <p>
+          The detail worth keeping: <strong>verifying that both sides read the same
+          file proved nothing.</strong> The derivation looked so obviously identical
+          that nobody thought to compare the output. Only diffing the emitted strings
+          found it.
+        </p>
+        <p>
+          Our contract said <code>host.id</code> is the machine-id and stopped there,
+          which is how a third producer reading the file itself would land on the raw
+          form in good faith and pay the same price. So the rendering is now
+          normative — a lowercase hyphenated UUID — and the conformance kit
+          <strong>fails</strong> on the raw 32-hex form and on uppercase hex,
+          wherever the key appears: a host's identity, a VM's hypervisor id, a
+          host-local endpoint's fourth key, a relationship target. A check per type
+          would have missed three of those four.
+        </p>
+        <p>
+          A failure rather than a warning, at the producer team's own request, and
+          their reasoning is the better one: a warning gets read once and filed,
+          while this defect is silent and surfaces months later against an entity
+          everything already points at.
+        </p>
+        <p>
+          One nuance we insisted on. The check's message does not simply say "use
+          hyphens" — for a producer already emitting the other form in production
+          that would be destructive advice, because its graph is keyed on what it
+          emits today and aligning re-keys every host. A check that fails has to say
+          what to do, not only that something is wrong.
+        </p>
+
+        <h2>Two: a fallback identity we never specified</h2>
+        <p>
+          Our contract gave <code>db</code> a ladder — PostgreSQL's
+          <code>system_identifier</code>, MySQL's <code>server_uuid</code>, then an
+          operator-configured name — and stopped. But MariaDB and Redis expose no
+          stable identifier (Redis's <code>run_id</code> changes at every restart),
+          and most operators configure nothing. The bottom of the ladder was the
+          common case, and we had left it blank.
+        </p>
+        <p>
+          So the producer filled it, reasonably, with <code>address:port</code>. And
+          <code>127.0.0.1:3306</code> is byte-identical on every machine in the
+          estate. Every local database collapsed into <em>one</em> entity whose
+          attributes flipped between servers every five minutes — 118 attribute
+          updates in six hours, and worse than noise: its telemetry join keys pointed
+          at one machine while its attributes described another.
+        </p>
+        <p>
+          The fix took a round trip worth reporting. Their first proposal scoped the
+          value by host, which fixes the collision. We pushed back, and the argument
+          that carried was not ours about aesthetics: <strong>our own contract already
+          answered this question</strong> for service instances, with
+          <code>&lt;service.name&gt;@&lt;host.id&gt;</code>, and explicitly rejected
+          <code>address:port</code>. Reusing that shape answers "how do you name a
+          local thing with no stable id" once rather than once per type.
+        </p>
+        <pre><code>mysql:3306@8b861704-05bc-4382-b057-7eac3df5e730</code></pre>
+        <p>
+          They adopted it, and corrected a factual error in our second argument while
+          doing so — we had claimed two identities would be byte-identical; they
+          differ by a transport suffix. The conclusion held on the other leg. We
+          would rather learn that in an email than discover it in a decision record
+          both sides had signed.
+        </p>
+        <p>
+          A consequence for operators: a host-local identity was previously refused an
+          anchor, so a local database sat in no host's impact radius at all. With a
+          unique identity it gains its <code>runs_on</code>. That is a hole in the
+          graph closing, not a modelling nicety.
+        </p>
+
+        <h2>Three: two surfaces answering "is this the same machine?"</h2>
+        <p>
+          When two producers describe one real machine from different vantage points —
+          a hypervisor's VM and an in-guest host — Toise stores two entities and keeps
+          storing two. Merging them would destroy the ability to say which producer
+          saw what. When a producer can justify the link, it asserts a
+          <code>same_as</code> edge with a confidence and a basis, and Toise derives
+          the grouping at read time without ever writing it back.
+        </p>
+        <p>
+          That overlay existed only on the MCP surface. A GraphQL consumer had to walk
+          <code>same_as</code> itself and pick its own threshold — which is precisely
+          how two read surfaces come to disagree about a question that must have one
+          answer. Identity should not depend on which protocol you asked over.
+        </p>
+        <pre><code>canonical(id: $id) {
+  aliases { id type label }
+  links { from to confidence basis }
+}</code></pre>
+        <p>
+          The walk now lives in one place and both surfaces call it, so they cannot
+          drift. It is a top-level query rather than a field on the entity, and that
+          is deliberate: a group is derived from edges, and edges change, so
+          <code>asOf</code> has to select the graph the belief is read from.
+        </p>
+        <p>
+          Evidence below the confidence threshold stays in the graph and collapses
+          nothing. A wrong merge answers confidently about the wrong machine, which is
+          worse than a visible gap.
+        </p>
+
+        <h2>A trap we would not have documented on our own</h2>
+        <p>
+          The producer team rehearsed their identity migration end to end against a
+          live instance before shipping it — old binary to create the old entity, new
+          binary to cut over — and reported something we had never written down.
+        </p>
+        <p>
+          Bridging a re-key with a one-cycle <code>same_as</code> keeps the old and new
+          timelines joinable without merging anything. But once the old entity is
+          gone, the cascade removes every edge touching it, including the bridge. So a
+          current-state query for <code>same_as</code> afterwards returns
+          <strong>zero</strong> — correct, since an edge to a deleted entity is
+          meaningless in the present, but indistinguishable from having emitted
+          nothing at all.
+        </p>
+        <p>
+          Someone verifying a migration with the obvious query would have read zero and
+          concluded the whole thing failed. It is now documented, with the dated read
+          that actually verifies the emission. Finding it took someone rehearsing a
+          migration rather than trusting it, which is the part worth copying.
+        </p>
+
+        <h2>Also in this release</h2>
+        <p>
+          The liveness sweep used to log
+          <code>expired stale entities count=14</code> for a pass that expired seven
+          entities and cascaded seven relations: the label said entities, the number
+          was both. During a flapping investigation that ratio is the whole signal — a
+          pass that expires one entity and cascades twenty edges reads nothing like one
+          that expires twenty entities. The line now carries <code>entities=</code> and
+          <code>relations=</code> separately. <strong>Worth knowing if you parse
+          it.</strong>
+        </p>
+        <p>
+          And <a href="https://github.com/toise-dev/toise/blob/main/docs/architecture/adr/0034-network-segment-as-an-entity.md">ADR
+          0034</a> proposes <code>network.segment</code>, so that <em>why can't A reach
+          B</em> becomes a graph question. Proposed, not implemented — and the
+          interesting part is what it refuses to freeze. Docker Swarm assigns an
+          identifier, so that subtype is settled. Kubernetes in its default flat
+          network has no object to identify at all, and a VLAN id is not globally
+          unique while a VLAN trunked across five switches is one segment rather than
+          five. Both stay explicitly open, with their reasons written down, because the
+          reason says what would have to be true for them to close. An identifier
+          engraved wrongly costs a migration; an open one costs a sentence.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.13.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.13.0">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.13.0/">0.13.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+          Producers get the <code>host.id</code> check with
+          <code>pkg/emit/v0.8.0</code>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
