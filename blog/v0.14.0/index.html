@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.14.0 — reachability, and the first deprecation</title>
+    <meta
+      name="description"
+      content="Toise 0.14.0 adds network.segment, so that "why can\'t A reach B" becomes a graph question, and opens the 1.0 freeze audit with the project\'s first deprecation. Additive, with the zero-config single binary unchanged."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.14.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.14.0 — reachability, and the first deprecation" />
+    <meta
+      property="og:description"
+      content="A fourteenth entity type for the boundary an incident actually asks about — and the first thing we have promised to remove."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.14.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.14.0 — reachability, and the first deprecation</h1>
+        <p class="meta">2026-08-17</p>
+
+        <p class="lead">
+          Two things in this release, and they pull in opposite directions. One adds
+          a type, because a question an incident actually asks had no answer in the
+          graph. The other announces the first thing we have promised to take away.
+          Both are the same exercise: deciding what we are willing to be bound by.
+        </p>
+
+        <h2>The boundary nobody could query</h2>
+        <p>
+          "Why can't A reach B" is the first question a deployment incident asks. Two
+          workloads on the same virtual network segment can address each other; two on
+          different segments cannot, whatever the firewall says. That boundary is the
+          answer, and it was nowhere in the graph.
+        </p>
+        <p>
+          Not because nobody had the data. A Docker Swarm probe sees every overlay.
+          But none of the registered network types named a segment — a device is a
+          box, an interface is a port, an address is an IP — so the information rode
+          as <em>metric labels</em>: queryable, and not traversable. Answering "what
+          else is on this segment" meant scanning every service and comparing strings.
+        </p>
+        <p>
+          That is the same shape that kept IP addresses untraversable until
+          <code>network.address</code> became a node, and the same one that settled
+          the pod two releases ago: <strong>an attribute you have to string-match on
+          is not a join.</strong>
+        </p>
+        <pre><code>service.instance --has_segment--&gt; network.segment   (the cluster declares it)
+container        --attached_to--&gt; network.segment   (the workload joins it)</code></pre>
+        <p>
+          Verified on a real four-node Swarm before shipping, not asserted from the
+          code:
+        </p>
+        <pre><code>api    attached_to -&gt; ingress, frontend
+cache  attached_to -&gt; backend
+
+find_path(api -&gt; cache, attached_to)  -&gt;  reachable: false</code></pre>
+        <p>One hop. That is the whole point of the type.</p>
+
+        <h2>The part we refused to freeze</h2>
+        <p>
+          Identity is a subtype-prefixed value, and <strong>only
+          <code>swarm:&lt;network-id&gt;</code> is frozen</strong> — the cluster
+          assigns it, so it is unique and not derived from an address.
+        </p>
+        <p>
+          <code>k8s:</code> and <code>vlan:</code> are deliberately left open, and
+          that is the decision rather than an omission. Kubernetes has no object to
+          identify in the default flat-network case: a NetworkPolicy is a restriction
+          that composes with others, a Namespace is an administrative boundary the
+          network ignores. And a VLAN id is not globally unique — VLAN 10 exists at
+          every site — while a VLAN trunked across five switches is <em>one</em>
+          segment rather than five, so scoping it by device would fragment exactly
+          what it is meant to unify.
+        </p>
+        <p>
+          The first draft of the design froze <code>k8s:</code> anyway, by analogy
+          with Swarm. The producer team pointed out the analogy did not hold, and they
+          were right. <strong>An identity engraved wrongly costs a migration; an open
+          one costs a sentence</strong> — and the sentence says what would have to be
+          true for it to close, which is the useful part.
+        </p>
+
+        <h2>What the edges do not promise</h2>
+        <p>
+          The impact direction says a segment failing takes what is attached to it.
+          Correct as a statement of dependency — and it will never fire.
+        </p>
+        <p>
+          An overlay is a control-plane construct: it does not fail on its own. What
+          fails is a node or the underlying transport, and no producer can report
+          "this segment is down". Attached-task counts and subnet saturation are
+          metrics, not health.
+        </p>
+        <p>
+          So both readings are written down, because leaving one out makes the
+          semantics look richer than they are: <code>impact_of</code> stays meaningful
+          over a <em>hypothetically</em> failing segment — <em>if this overlay broke,
+          what goes with it</em> is a real question during a fabric change — while
+          <strong>nothing propagates at runtime, so do not build an alert on it.</strong>
+          The alertable event exists and sits on the edge instead: a container losing
+          its attachment is observable, and the runtime reports it.
+        </p>
+        <p>
+          Membership is likewise <strong>necessary and not sufficient</strong> for
+          reachability. Policies restrict on top of it, and on a flat Kubernetes
+          network shared membership says almost nothing. A graph that overstates what
+          it knows is worse than one that admits a gap.
+        </p>
+
+        <h2>The first deprecation</h2>
+        <p>
+          After 1.0, the stability policy binds us to whatever the surfaces look like
+          on that day. So the freeze audit asks of each item a different question from
+          "is it documented": <em>would we defend this in three years?</em>
+        </p>
+        <p>
+          Three relation types answer no. <code>routes_via</code>,
+          <code>forwards_to</code> and <code>adjacent_to</code> were superseded years
+          of releases ago and have been documented as "do not emit" since. Frozen at
+          1.0 they would be supported for the life of 1.x. They are now deprecated for
+          removal — checked first against production, where all three have zero use.
+        </p>
+        <p>
+          This release <em>is</em> the notice: our own rule requires a deprecation in
+          a release preceding a removal, so without shipping it now we could not have
+          removed them at 1.0 without breaking the policy on the day we publish it.
+        </p>
+        <p>
+          The interesting part of the audit was that the four first findings did not
+          all get the same treatment. <code>ENTITY_IDENTITY_CHANGED</code> cannot be
+          deprecated at all: it is a protobuf enum value retained to replay logs
+          written before exact identity matching, so it stays forever. What was
+          actually wrong is that the change taxonomy listed it with no hint that
+          nothing emits it — inviting a consumer to write a handler for an event that
+          will never arrive. Now stated.
+        </p>
+        <p>
+          And <code>recentChanges</code> gained the <code>1h</code> default its MCP
+          twin already had. Backward compatible, so it could have waited — but
+          freezing two surfaces that answer the same question differently is precisely
+          what the audit exists to prevent.
+        </p>
+
+        <h2>Two contract decisions, from a producer's adoption</h2>
+        <p>
+          The reference producer adopted the wire vocabulary and explicitly declined
+          the SDK's client, for a good reason: their agent already owns a single OTLP
+          rail carrying its tenant header and enrichment, and a second OTLP client
+          would have added a connection, an auth surface, and a seam — reintroducing
+          the drift a shared contract exists to remove. They import
+          <code>pkg/emit/wire</code> for the vocabulary and run differential tests
+          against our encoder, so a divergence fails their build.
+        </p>
+        <p>
+          Their feedback was to keep that separation at 1.0. It turned out the promise
+          — <code>wire</code> is stdlib-only, so taking the vocabulary never drags a
+          protocol stack into your module graph — lived in a doc comment and was
+          <strong>enforced by nothing</strong>. A convenience import added tomorrow
+          would have closed that door silently. It is now a test, and the promise was
+          measured rather than repeated: a module importing only <code>wire</code>
+          requires one thing after <code>go mod tidy</code>, and grpc is not in it.
+        </p>
+        <p>
+          They also asked whether producer delete reasons should mirror our
+          <code>delete_source</code>. No — the two are distinct axes:
+          <code>delete_source</code> says <em>who authored</em> the disappearance and
+          we write it; the reason says <em>why the producer decided</em> and they
+          write it. The enum stays open, but it gains a recommended core, because an
+          open enum without one is how every producer invents its own spelling.
+        </p>
+        <p>
+          Six of those values say the resource ended. One says something else, and it
+          is the one that earns the section:
+        </p>
+        <pre><code>unmonitored  — the observation ended; the resource may well still be running</code></pre>
+        <p>
+          A probe removed from a configuration, or a target that left the scope, says
+          nothing about the resource. A database entity that disappears because
+          somebody edited a probe list <strong>must not read as "the database is
+          gone"</strong> — that is the reading that causes an incident. It is the
+          producer-side mirror of our own liveness expiry: there we say <em>I stopped
+          hearing</em>, here the producer says <em>I stopped looking</em>.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.14.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.14.0">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.14.0/">0.14.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+          Producers get the segment vocabulary with <code>pkg/emit/v0.9.0</code>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
