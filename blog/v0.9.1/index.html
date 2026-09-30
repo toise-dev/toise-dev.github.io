@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.9.1 — hardening after an engineering review</title>
+    <meta
+      name="description"
+      content="Toise 0.9.1 is a patch release from a full engineering review: correctness and durability fixes, security hardening, and the same_as identity-belief path completed end to end. Backward compatible, no migration."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.9.1/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.9.1 — hardening after an engineering review" />
+    <meta
+      property="og:description"
+      content="A patch release from a full engineering review: correctness fixes, security hardening, and same_as beliefs end to end."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.9.1/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      .notice {
+        border-left: 3px solid var(--accent);
+        background: #f1e9dc;
+        border-radius: 0 7px 7px 0;
+        padding: 12px 16px;
+        margin: 24px 0;
+      }
+      .notice p {
+        margin: 6px 0;
+      }
+      .notice code {
+        background: var(--bg);
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.9.1 — hardening after an engineering review</h1>
+        <p class="meta">Released 2026-07-03 · written up 2026-09-30</p>
+
+        <p class="lead">
+          0.9.1 is the result of a full engineering review of 0.9.0. It tightens a
+          handful of correctness and durability paths, hardens two security
+          defaults, and finishes a feature that was wired on one side only. Every
+          change is backward compatible: no wire-contract break, no data migration.
+        </p>
+
+        <h2>Identity beliefs, end to end</h2>
+        <p>
+          A producer can now say that two nodes are the same real thing, with a
+          confidence and a basis — for example <em>confidence 0.95, basis
+          <code>ifPhysAddress</code></em>. The SDK exposes it as
+          <code>Relationship.Confidence</code> and <code>.Basis</code>, and ingest
+          accepts <code>confidence</code> and <code>basis</code> on the
+          <code>same_as</code> descriptor.
+        </p>
+        <p>
+          The read-time canonical overlay (ADR 0020) already knew how to collapse
+          such beliefs; until this release nothing could feed it. Belief attributes
+          ride only on <code>same_as</code> edges, and the conformance kit advises
+          when a confidence is missing or outside <code>[0,1]</code>.
+        </p>
+
+        <h2>Correctness and durability</h2>
+        <ul>
+          <li>
+            <strong>Past-instant reads near the retention horizon.</strong> After
+            pruning, an as-of read could omit a still-live entity whose only
+            surviving event was a recent heartbeat. Retention now writes a baseline
+            event at the horizon for such entities, and cleans up after itself.
+          </li>
+          <li>
+            <strong>Audit attribution.</strong> The audit trail recorded operator
+            annotations under the <code>default</code> tenant. The tenant router now stamps the
+            resolved tenant, so every write is attributed to the tenant it targeted.
+          </li>
+          <li>
+            <strong>Log restore.</strong> A restore now checks that shipped segments
+            are contiguous and stops on a gap or overlap rather than rebuilding from
+            them.
+          </li>
+          <li>
+            <strong>Tenant lifecycle.</strong> The tenant cap is enforced atomically
+            under concurrent first use, and <code>delete-tenant</code> refuses to run
+            against a live server.
+          </li>
+          <li>
+            <strong>Mass expiry.</strong> When a producer's whole subtree lapses at
+            once, the sweep commits in a single durable batch instead of one write
+            per entity and edge.
+          </li>
+          <li>
+            <strong>Conformance kit and producer guide.</strong> The kit now accepts
+            the <code>entity.description</code> form Toise itself emits, and the guide
+            no longer suggests retrying a permanent <code>PartialError</code>.
+          </li>
+        </ul>
+
+        <h2>Security</h2>
+        <ul>
+          <li>
+            <strong>OIDC / JWT role claim.</strong> A configured role claim that is
+            absent, empty or unrecognised is now rejected instead of falling back to
+            the full role.
+          </li>
+          <li>
+            <strong><code>ingest_mtls_only</code>.</strong> A configuration that would
+            leave the read surface without an authenticator is refused at startup.
+          </li>
+        </ul>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.9.1</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.9.1">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.9.1/">0.9.1 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+          Producers get this release's SDK with <code>pkg/emit/v0.4.0</code>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.15.0 — answers that explain themselves</title>
+    <meta
+      name="description"
+      content="Toise 0.15.0 improves how answers read: MCP instructions for every agent, disappearances glossed in plain language, bounded change windows that say what they cover, and a freeze audit of the MCP surface."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.15.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.15.0 — answers that explain themselves" />
+    <meta
+      property="og:description"
+      content="The data was already there. This release makes the answers say how to read them."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.15.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      .notice {
+        border-left: 3px solid var(--accent);
+        background: #f1e9dc;
+        border-radius: 0 7px 7px 0;
+        padding: 12px 16px;
+        margin: 24px 0;
+      }
+      .notice p {
+        margin: 6px 0;
+      }
+      .notice code {
+        background: var(--bg);
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.15.0 — answers that explain themselves</h1>
+        <p class="meta">Released 2026-08-20 · written up 2026-09-30</p>
+
+        <p class="lead">
+          Watching AI agents work through real infrastructure incidents taught us
+          something useful: the graph already held the answers, but the guidance for
+          reading them was not reaching the agents. 0.15.0 improves the reading,
+          not the recording. Additive only, with one small behaviour change on
+          GraphQL, described below.
+        </p>
+
+        <h2>Guidance delivered with the connection</h2>
+        <p>
+          The MCP <code>instructions</code> channel, sent to every client at
+          initialisation, was empty. Resources and prompts only help an agent that
+          goes looking for them. It now carries what changes an answer: start from
+          <code>describe_schema</code>, bound an incident window with
+          <code>graph_diff</code>, read a disappearance for what it says, remember
+          that ids are local to a replica, and treat absence as something other than
+          proof.
+        </p>
+
+        <h2>Disappearances, in plain language</h2>
+        <p>
+          Every <code>delete_source</code> on the change feed now comes with a
+          sentence in a new <code>disappearance</code> field. Each sentence also
+          says what the value does <em>not</em> mean: none of <code>producer</code>,
+          <code>liveness_expiry</code> or <code>cascade</code> says that an operator
+          removed anything. A bare code next to a field that sounds like a cause is
+          easy to over-read; the sentence prevents that.
+        </p>
+
+        <h2>Change windows that say what they cover</h2>
+        <p>
+          <code>recent_changes</code> now accepts <code>from</code> and
+          <code>to</code>, the shape <code>graph_diff</code> already had, so a past
+          incident can be bounded directly. Every answer names the window it read.
+          When the limit truncates, a <code>covered</code> field says which slice
+          came back, how many older changes were left out, and how to reach them.
+        </p>
+
+        <h2>Producers: host-local endpoints made easy</h2>
+        <p>
+          <code>DependsOnLocalEndpoint</code> in <code>pkg/emit</code> v0.10.0 builds
+          the four-key identity of a host-local <code>network.endpoint</code>. It
+          classifies the address itself: exactly the four host-local ranges gain the
+          observing host's id, everything else uses the three-key form. It also
+          applies the frozen canonicalisation rules, so two spellings of one IPv6
+          peer derive one identity.
+        </p>
+
+        <h2>The 1.0 freeze audit, continued</h2>
+        <ul>
+          <li>
+            The twelve MCP tools spell their shared fields identically, and each tool
+            that can truncate says so.
+          </li>
+          <li>
+            Two conventions are now stated once in the stability policy: absence is an
+            empty string rather than null for scalars, and <code>count</code> is scoped
+            to its object while <code>total</code> is the population before the limit.
+          </li>
+          <li>
+            The MCP golden pins the shape of answers, not their wording, so field
+            descriptions can keep improving after 1.0.
+          </li>
+        </ul>
+
+        <h2>Smaller improvements</h2>
+        <ul>
+          <li>
+            The debug UI names its tenant on every page and, when tenant selection is
+            client-controlled, offers a switcher. Under claim-derived tenancy the list
+            of tenants stays hidden, by design.
+          </li>
+          <li>
+            The HA guide states what replicas agree on, and what they legitimately may
+            not agree on at a given instant.
+          </li>
+          <li>
+            The ingestion guide documents the 15-minute resurrection window, which has
+            shipped since 0.7.0.
+          </li>
+        </ul>
+
+        <h2>Upgrading</h2>
+        <p>
+          No wire-contract break and no data migration. One behaviour change:
+          GraphQL <code>entityHistory</code> and <code>recentChanges</code> now
+          exclude heartbeats by default, matching MCP. A client that relied on seeing
+          them passes <code>includeHeartbeats: true</code>.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.15.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.15.0">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.15.0/">0.15.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+          Producers get this release's SDK with <code>pkg/emit/v0.10.0</code>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
