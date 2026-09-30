@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.9.2 — a timeline for the example viewer</title>
+    <meta
+      name="description"
+      content="Toise 0.9.2 changes only the graph-viz example: a time-travel timeline, a change-density heatmap and calmer layout. The server and SDK are unchanged from 0.9.1."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.9.2/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.9.2 — a timeline for the example viewer" />
+    <meta
+      property="og:description"
+      content="An example-only release: the graph viewer gains a time-travel timeline and a change-density heatmap."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.9.2/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      .notice {
+        border-left: 3px solid var(--accent);
+        background: #f1e9dc;
+        border-radius: 0 7px 7px 0;
+        padding: 12px 16px;
+        margin: 24px 0;
+      }
+      .notice p {
+        margin: 6px 0;
+      }
+      .notice code {
+        background: var(--bg);
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.9.2 — a timeline for the example viewer</h1>
+        <p class="meta">Released 2026-07-03 · written up 2026-09-30</p>
+
+        <p class="lead">
+          0.9.2 touches only <code>examples/graph-viz</code>, the standalone,
+          dependency-free page that reads the GraphQL API. The server and the
+          <code>pkg/emit</code> SDK are unchanged, so the binaries behave exactly as
+          0.9.1 does.
+        </p>
+        <p>
+          The viewer is an example, not a product surface. What it shows off is a
+          property of the engine: any past instant can be read back exactly.
+        </p>
+
+        <h2>Scrubbing through history</h2>
+        <p>
+          A graduated timeline with absolute time labels lets you drag a cursor to
+          any past instant and see the topology as it was, through the
+          <code>entities(asOf:)</code> and <code>relations(asOf:)</code> arguments. A
+          replay mode plays that history forward like a video.
+        </p>
+        <p>
+          Behind the timeline, a change-density heatmap shows one row per entity
+          type, so busy periods stand out at a glance. Heartbeats are excluded, so
+          the heatmap counts real changes. Dragging across it zooms the timeline
+          into that period.
+        </p>
+
+        <h2>A calmer layout</h2>
+        <ul>
+          <li>The layout settles into hub clusters before it is shown, then stays put.</li>
+          <li>Edges are faint and unlabelled by default; a toggle switches them on, to labels, or off.</li>
+          <li>A search filter isolates everything matching a query, such as one application.</li>
+          <li>The detail panel is resizable, and long values wrap instead of clipping.</li>
+        </ul>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.9.2</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.9.2">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.9.2/">0.9.2 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>

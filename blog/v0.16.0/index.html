@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.16.0 — holding up at fleet scale</title>
+    <meta
+      name="description"
+      content="Toise 0.16.0 makes the incident window answer in milliseconds on a 10,000-host estate, lets every MCP answer state its scope and freshness, shares operator annotations across replicas, and turns three fixed limits into configuration."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.16.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.16.0 — holding up at fleet scale" />
+    <meta
+      property="og:description"
+      content="The incident window at 10,000 hosts, in milliseconds. Every answer states its own scope and freshness."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.16.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      .notice {
+        border-left: 3px solid var(--accent);
+        background: #f1e9dc;
+        border-radius: 0 7px 7px 0;
+        padding: 12px 16px;
+        margin: 24px 0;
+      }
+      .notice p {
+        margin: 6px 0;
+      }
+      .notice code {
+        background: var(--bg);
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.16.0 — holding up at fleet scale</h1>
+        <p class="meta">Released 2026-09-01 · written up 2026-09-30</p>
+
+        <p class="lead">
+          0.16.0 is about keeping existing promises at a larger scale. A scale
+          campaign on a 10,000-host estate, surveys of the tools consuming Toise,
+          and a rolling-upgrade check each pointed at something to improve. None of
+          it changes the contract: one additive object on the read tools, and no
+          data migration.
+        </p>
+
+        <h2>The incident window, in milliseconds</h2>
+        <p>
+          "What changed in the last hour" is the question an incident starts with.
+          On a 10,000-host estate most events in that hour are heartbeats, and the
+          change reads were paying to classify each one before dropping it. Each
+          time-index entry now carries a one-byte tag, so a reader that excludes
+          heartbeats can skip them without touching the primary record.
+        </p>
+        <p>Measured on the same 311,750-entity estate, over a window of 380,000 heartbeats:</p>
+        <pre><code>recent_changes   7,612 ms  -&gt;  21 ms
+graph_diff       7,562 ms  -&gt;  17 ms</code></pre>
+        <p>
+          A window full of real changes still takes as long as the answer is large.
+          Cost now follows the answer rather than the noise. Older entries carry no
+          tag and are read as before until retention ages them out.
+        </p>
+        <p>
+          A benchmark gate now runs on every pull request touching Go, so these fast
+          paths stay fast. Its thresholds are deliberately generous, so it only
+          fires on real regressions.
+        </p>
+
+        <h2>Every answer states its scope</h2>
+        <p>
+          Tools that weigh several sources against each other need each source to
+          say how much it covers and how fresh it is. Every MCP read answer now
+          carries a <code>graph</code> block: entity and relation counts, the newest
+          event time in the tenant's log, the oldest instant still answerable, and
+          the <code>as_of</code> when the answer reads the past. It matters most for
+          an empty answer, which can now say how much it is able to speak for.
+        </p>
+
+        <h2>Operator annotations, shared and durable</h2>
+        <p>
+          Annotations are now keyed on the identity fingerprint, which every replica
+          computes identically, instead of on a local id. Existing rows move on
+          first touch, writing before deleting, so an interruption never loses a
+          note.
+        </p>
+        <p>
+          When log shipping is enabled, annotations also travel through the shared
+          object store, in both directions. Replicas never talk to each other; they
+          meet at the store. A single-node deployment simply gains a backup of its
+          annotations. Deletions are written as tombstones so they travel too.
+        </p>
+
+        <h2>Three limits become configuration</h2>
+        <ul>
+          <li>
+            <strong><code>tenant_retention_max_age</code></strong> sets retention per
+            tenant; unlisted tenants keep the global bound.
+          </li>
+          <li>
+            <strong><code>resurrection_grace</code></strong> sizes the window during
+            which a returning entity keeps its id; the default is unchanged.
+          </li>
+          <li>
+            <strong><code>otlp_max_recv_bytes</code></strong> raises the OTLP
+            receive size, which is now documented alongside its failure mode.
+          </li>
+        </ul>
+        <p>
+          Malformed values are refused at boot rather than guessed at.
+        </p>
+
+        <h2>Upgrading</h2>
+        <p>
+          Additive: one <code>graph</code> object on the read tools. No data
+          migration: annotation rows move on first touch, and untagged time-index
+          entries age out with retention.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.16.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.16.0">release</a>,
+          each with a checksum, and the container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.16.0/">0.16.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
