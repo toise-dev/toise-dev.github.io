@@ -184,13 +184,15 @@
         <p class="meta">2026-09-30</p>
 
         <p class="lead">
-          A graph can be complete, correct, and useless.
+          A correct answer still has to be readable by whoever receives it.
+          0.17.0 was about saying what an answer is worth. This one is about making
+          it easy to read.
         </p>
         <p>
-          That happened. A consumer asked Toise a well-formed question, got a
-          well-formed answer, and could not act on it — not because the answer was
-          wrong, but because nothing in it was readable. 0.17.0 was about saying what
-          an answer is worth. This one is about making it possible to read.
+          The trigger was ordinary feedback from a consumer: a well-formed question,
+          a correct answer, and entities that were hard to recognise at a glance.
+          The names were in the graph; the compact answer just did not lead with
+          them.
         </p>
         <p>
           Legible to whom matters here. Toise's reader is an MCP client or a GraphQL
@@ -212,8 +214,8 @@
         <h2>A name meant to be shown</h2>
         <p>
           Until 0.18.0, an entity's only human-facing string was its label, and the
-          label was built from its identifying attributes. That is exactly right for
-          identity and exactly wrong for a screen: in the compact verbosity mode —
+          label was built from its identifying attributes. That is right for identity,
+          and not what a screen wants: in the compact verbosity mode —
           the mode that exists so an assistant can scan many entities cheaply —
           twenty-one hosts rendered as <code>host host.id=&lt;uuid&gt;</code> and
           ninety-four containers as sixty-four hex characters.
@@ -221,8 +223,7 @@
         <p>
           The names were in the graph the whole time. <code>host.name</code> was
           present on all twenty-one hosts, <code>container.name</code> on all
-          ninety-four containers. <strong>The cheap-scan mode was the one mode that
-          hid every readable name.</strong>
+          ninety-four containers. The compact mode simply did not show them.
         </p>
         <p>
           So entities now carry <code>display_name</code> (MCP) and
@@ -247,8 +248,7 @@ label                  to scan</code></pre>
           matched on a label has to move to <code>identity_fingerprint</code>, which
           is returned beside it, is identical across replicas, survives re-minting,
           and does not move when a thing is renamed. Code that grouped by label
-          across incarnations was correct by accident until this release and is not
-          any more.
+          across incarnations should move to the fingerprint now.
         </p>
 
         <h2>Both spellings of the interface name</h2>
@@ -289,9 +289,9 @@ label                  to scan</code></pre>
           Measured on a lab graph: the edge joining the gateway to the interface that
           holds it was asserted and retracted <strong>about a hundred and fifty
           times a day</strong>. Each removal was reported with
-          <code>delete_source=producer</code>, which was literally true — a
-          producer's event caused it — and completely misleading, because that
-          producer had never asserted the edge it removed.
+          <code>delete_source=producer</code>. Technically accurate, since a
+          producer's event caused it, but misleading, because that producer had
+          never asserted the edge in the first place.
         </p>
         <p>
           Edges are now reference-counted per producer exactly as entities are. An
@@ -327,9 +327,9 @@ label                  to scan</code></pre>
           heuristic, so an IP carried as a plain attribute is not linked to the
           <code>network.address</code> entity for that IP; Toise resolves the join at
           read time and deliberately never writes it back. An operator reported
-          seeing no link between a gateway and a dashboard it demonstrably talks to —
-          the link was there, resolved, and painted invisible. Defaulting a
-          traversal off, in a graph, defeats the reason for having one.
+          seeing no link between a gateway and a dashboard it talks to. The link was
+          there, resolved, but hidden by a default. Derived links are now drawn by
+          default.
         </p>
 
         <h2>Upgrading</h2>
@@ -343,21 +343,20 @@ label                  to scan</code></pre>
           survives one of them dropping it.
         </p>
 
-        <h2>One thing we have not fixed</h2>
+        <h2>Known limitation</h2>
         <p>
           The event log is complete and reading the graph at a past instant is exact.
-          But on a tenant ingesting thousands of events per minute, the change-feed
-          read under-reports and can answer <code>0</code> for a period that was
-          busy, without saying so. We found it in this cycle by relying on it and
-          being wrong three times in one morning, including reporting a transport
-          outage to another team that had never happened.
+          On a tenant ingesting thousands of events per minute, however, the
+          change-feed read (<code>recentChanges</code>, and <code>entityHistory</code>
+          bounded by time) can under-report, down to answering <code>0</code> for a
+          busy period. Below a few hundred events per minute it is accurate. The
+          behaviour predates this release and is not made worse by it.
         </p>
         <p>
           It is tracked as
-          <a href="https://github.com/toise-dev/toise/issues/397">#397</a> and it is
-          not fixed here. Below a few hundred events per minute the change feed is
-          accurate. Above that, and if what you need is to investigate an incident
-          after the fact, follow that issue before you build on it.
+          <a href="https://github.com/toise-dev/toise/issues/397">#397</a>. If you
+          run at that volume and rely on the change feed to review incidents after
+          the fact, follow that issue.
         </p>
         <p>
           Saying what an answer is worth was the 0.17.0 programme. It applies to our
