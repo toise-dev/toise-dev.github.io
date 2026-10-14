@@ -13,6 +13,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://toise.dev/blog/v0.21.0/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://toise.dev/blog/v0.18.0/</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
