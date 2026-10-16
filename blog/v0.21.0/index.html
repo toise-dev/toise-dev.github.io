@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.21.0 — who said it, and why it went</title>
+    <meta
+      name="description"
+      content="Toise 0.21.0 names who asserts each edge and through which collector, quotes a producer's own reason when something disappears, stops reading a shared observation as a hop, and turns the insecure-configuration warning into a metric you can alert on. Upgrades in place from 0.20."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.21.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.21.0 — who said it, and why it went" />
+    <meta
+      property="og:description"
+      content="A warning became a control, and a convergence stopped being read as a route. Qualified through two prereleases, with the reservations stated."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.21.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      .notice {
+        border-left: 3px solid var(--accent);
+        background: #f1e9dc;
+        border-radius: 0 7px 7px 0;
+        padding: 12px 16px;
+        margin: 24px 0;
+      }
+      .notice p {
+        margin: 6px 0;
+      }
+      .notice code {
+        background: var(--bg);
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+          <a href="/blog/">Blog</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.21.0 — who said it, and why it went</h1>
+        <p class="meta">2026-10-14</p>
+
+        <p class="lead">
+          Three of the changes in this release cannot be verified by reading a
+          diff. So two prereleases were cut, and all three were measured on real
+          data before this one was tagged. The reservations that survived the
+          measurement are listed below, not omitted.
+        </p>
+        <p>
+          The short version: an edge now says who asserts it and through which
+          collector; a disappearance says why, in the producer's own words; a path
+          no longer runs through something two machines merely both observed; and
+          an insecure configuration is a metric you can alert on, instead of a
+          warning printed once at boot.
+        </p>
+
+        <div class="notice">
+          <p><strong>One answer changes shape.</strong></p>
+          <p>
+            <code>find_path</code> no longer walks through a shared observation. Two
+            interfaces that heard the same hardware address are not connected
+            <em>to each other</em> by that fact, so a path now reports the device
+            that carries them rather than the cache entry they share. Two machines
+            that dial the same object store, resolver or upstream API are no longer
+            rendered as connected either. If you depended on the old answer, you
+            were reading a co-observation as a hop. Nothing else changes shape; a
+            0.20 deployment upgrades in place.
+          </p>
+        </div>
+
+        <h2>When one collector loses sight of a thing, Toise no longer forgets it for the others</h2>
+        <p>
+          An entity or an edge stays live while any producer still asserts it (edges
+          since 0.18.0), and a producer may only release its own reference. The grain
+          of "its own" was the producer. That turned out to be too coarse, because
+          one producer is often several collectors: an agent running host ARP and
+          SNMP ARP sees the same neighbours twice, and LLDP and CDP see the same
+          links. Those overlaps are the normal case, not the corner.
+        </p>
+        <p>
+          With the reference keyed on the producer alone, one method losing sight of
+          an edge released the whole producer's reference and deleted an edge another
+          method was still asserting, which then re-created it on its next cycle. And
+          <code>collected_by</code> reported whichever method had spoken last, so an
+          agent with six collectors returned one rotating value where a reader needs
+          the set.
+        </p>
+        <p>
+          A liveness reference now names the <strong>speaker</strong>: the producer
+          and the collection method it spoke through. The rule is unchanged; only its
+          grain moved. Edges gain <code>via_asserted_by</code> and
+          <code>via_collected_by</code> on <code>get_neighbors</code>
+          (<code>assertedBy</code> / <code>collectedBy</code> in GraphQL), and the
+          answer is a set, including across the methods of one producer. Two edges of
+          one type are not the same claim: an adjacency protocol <em>states</em> a
+          link, a forwarding table lets one be <em>inferred</em>, and a consumer
+          drawing a map can now show a measurement differently from a correlation.
+        </p>
+        <p>
+          An independent review found two serious defects in this change on the day
+          it merged, and a third was found later by reading an upgrade plan rather
+          than the code. Two concerned references restored from a snapshot written
+          before the key carried the method, one a parked edge that credited the
+          method that completed its endpoints rather than the one that asserted
+          it. All three are fixed here.
+          Producers change nothing: one that names no instrumentation scope keys on
+          its id alone, byte for byte as before.
+        </p>
+
+        <h2>A disappearance says why, and distinguishes an incident from a blind spot</h2>
+        <p>
+          Every deletion carries a plain-language gloss beside its
+          <code>delete_source</code>, because that gloss is the field a consumer
+          actually reads. It took only the source, so every producer deletion read as
+          "the producer reported this gone". A producer now reports deletions whose
+          reason is that it <em>stopped watching</em> a device that may well still be
+          running. Its own term sat in <code>delete_reason</code>, next to a sentence
+          asserting the opposite.
+        </p>
+        <p>
+          The gloss now takes the reason, quotes it, and widens the reading rather
+          than narrowing it. It does not interpret the value: the reason is an open
+          enum in producer vocabulary, and paraphrasing a word Toise does not define
+          is how a reader ends up trusting the gloss over the producer. "The thing
+          stopped existing" and "we stopped looking at it" are the difference between
+          an incident and a blind spot, and until now the difference was unreadable.
+        </p>
+        <p>
+          Measured end to end on a test bench: a switch paused for six minutes,
+          fifteen entities disappeared carrying the producer's own word, and the
+          answer quoted it.
+        </p>
+
+        <h2>A path is a path, not a shared observation</h2>
+        <p>
+          Two fixes, one principle. First, <code>find_path</code> was walking through
+          an observed <code>network.endpoint</code>. An endpoint is declared in one
+          relation pair only, as the target of <code>depends_on</code>, and nothing
+          leaves it; so every transit entered by one inbound dependency and left by
+          another one reversed, and two machines that dial the same store were
+          rendered as connected. On a fleet, that made a large fraction of host
+          pairs falsely reachable. A terminal entity may now be reached, and may be
+          the start, but may only be left by an edge it is the source of. When the
+          search then fails, the answer names the shared endpoints both ends depend
+          on (<code>convergences</code>) instead of denying the link and burying the
+          only useful fact (<a href="https://github.com/toise-dev/toise/issues/442">#442</a>).
+        </p>
+        <p>
+          Second, this release registers <code>network.neighbor</code>: a link-layer
+          neighbour an observer saw on one of its own interfaces and could not resolve
+          to anything it holds. Its identity is the observer plus the MAC, on purpose,
+          since a MAC is not globally unique and a wrong merge is permanent where a
+          split is reconciled later by a belief. The first emission of such a thing
+          creates a new way to be wrong: one MAC heard on two interfaces of a host is
+          a convergence, and a traversal that enters and leaves it by the same
+          relation type reads a co-observation as a hop. A per-type crossing rule now
+          forbids exactly that, for a neighbour and for an interface entered through
+          <code>aggregated_into</code>. Per type, because the general rule was refuted
+          within the hour: a switch is entered and left by <code>has_interface</code>
+          both times, and that <em>is</em> forwarding.
+        </p>
+
+        <h2>A warning became a control</h2>
+        <p>
+          Three insecure configuration conditions had been true, correctly detected
+          and correctly logged, in a production log for months. The control worked
+          and protected nothing, because a WARN at boot is read once, by nobody.
+        </p>
+        <p>
+          Insecure configuration is now a metric. <code>toise_insecure_config</code>
+          names each condition, <code>toise_insecure_config_conditions</code> counts
+          them and is published even at zero, and a last-check timestamp sits beside
+          it, because a zero total proves only that something wrote a zero while a
+          fresh timestamp proves the list was walked. The documentation gives the
+          alert rules, including the presence rule a vanished series needs.
+        </p>
+        <p>
+          Found on an install the day before the cut, from two startup lines: the
+          container image binds <code>0.0.0.0</code> by default, so behind a
+          terminating proxy, which is the recommended deployment, the exposed-listener
+          condition was permanently true and the alert would have fired forever. An
+          operator can now declare <code>tls_terminated_upstream</code>. It suppresses
+          <code>no_tls</code> only, never <code>no_auth</code>, and the declaration is
+          itself exported as a metric, published as 0 or 1 always: a setting whose
+          only effect is to quiet a control has to leave a trace
+          (<a href="https://github.com/toise-dev/toise/issues/464">#464</a>).
+        </p>
+        <p>
+          Two smaller ones in the same spirit. <code>/readyz</code> is deliberately
+          unauthenticated and was returning the failing tenant's identifier and the
+          storage engine's error text to anyone who asked; it now says whether, and
+          the reason goes to the log on every transition. And the exposed-listener
+          warning names what is actually missing, instead of recommending both auth
+          and TLS to an operator who had already set one.
+        </p>
+
+        <h2>Also in this release</h2>
+        <ul>
+          <li>
+            <code>monitors</code> no longer propagates a monitored target's failure
+            into the agent watching it. The agent is healthy and its reading is bad,
+            which is a different fact; one unreachable target was inflating
+            <code>impact_of</code> by the whole fleet that agent watches.
+          </li>
+          <li>
+            Removal by absence is scoped per collection method. One agent running
+            several collectors had them delete each other's edges, measured as a
+            <code>bound_to</code> flipping every one to three minutes. A producer
+            now emits the complete set per method, which is what each method
+            observes anyway.
+          </li>
+          <li>
+            The MAC rendering is normative and the same everywhere:
+            <code>AA-BB-CC-DD-EE-FF</code>, the form semconv requires. The
+            conformance kit rejects any other, wherever a MAC appears, because two
+            renderings of six bytes are two entities and the join silently finds
+            nothing.
+          </li>
+          <li>
+            <code>identity</code>, <code>attributes</code>, <code>asserted_by</code>
+            and <code>collected_by</code> are always rendered on an entity. An empty
+            list means asked and none; null means not rendered at this verbosity.
+            Measured before changing it: <code>attributes</code> was absent on the
+            majority of entities in two production tenants.
+          </li>
+          <li>
+            <code>toise-server --version</code> prints the version and commit and
+            exits, so a file on disk can be identified before it is deployed.
+          </li>
+          <li>
+            The demonstration fixture no longer contradicts the identity rule it
+            exists to teach: it keyed a route on a host's name and carried the next
+            hop as a descriptive attribute, producing exactly the oscillation the
+            three-key identity eliminates. Found by someone running it.
+          </li>
+        </ul>
+
+        <h2>Upgrading</h2>
+        <p>
+          Nothing to do: the data directory is read in place and the log sequence
+          continues. An upgrade from 0.20.0 was exercised, and so was one from the
+          prerelease: sequence advancing, no spurious retraction, provenance
+          unchanged at two, five and ten minutes after restart.
+        </p>
+        <p>
+          Two things to know. <code>find_path</code> changes shape as described at
+          the top. And a producer must not enable <code>network.neighbor</code>
+          emission until a Toise carrying the type is deployed: under the default
+          strict vocabulary the records are rejected one by one until then, and the
+          conformance kit cannot catch it, since it validates shape, not registry
+          membership. Watch <code>toise_ingest_records_total{result="rejected"}</code>.
+        </p>
+
+        <h2>Since the last post</h2>
+        <p>
+          Two releases shipped between 0.18.0 and this one without a post here.
+          <strong>0.19.0</strong> gave the three entity types that lacked a
+          <code>display_name</code> one, and made the ingest counters say whose
+          records were refused on a multi-tenant server. <strong>0.20.0</strong>
+          closed twenty security advisories reachable from Toise's own code; every
+          earlier binary was compiled against a standard library with known
+          advisories. It also made list
+          answers pageable so a tenant holding more entities than one answer carries
+          can retrieve all of them. If you run anything older than 0.20.0, upgrade
+          for that alone. Both are detailed in the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+        </p>
+
+        <h2>Reservations, stated rather than omitted</h2>
+        <ul>
+          <li>
+            Link aggregation is absent from the test bench, so the half of the
+            crossing rule that concerns an aggregated interface was never exercised.
+            That is a gap in the bench, not a property of the model, and it reopens
+            the day the bench gains a bond.
+          </li>
+          <li>
+            The crossing rule's proof for neighbours is three queries, placed where
+            the rule decides. Weak, and worth saying.
+          </li>
+          <li>
+            <code>From</code> and <code>To</code> in the relation registry are read
+            by nothing, so they describe rather than constrain.
+            <code>monitors</code> declared the wrong target for three releases and no
+            test could notice
+            (<a href="https://github.com/toise-dev/toise/issues/494">#494</a>).
+          </li>
+          <li>
+            A restored log re-stamps <code>commit_seq</code> in batches of a
+            thousand, so pairing events on it after a disaster recovery groups
+            unrelated changes
+            (<a href="https://github.com/toise-dev/toise/issues/496">#496</a>).
+          </li>
+        </ul>
+        <p>
+          The change-feed under-reporting flagged in the 0.18.0 post
+          (<a href="https://github.com/toise-dev/toise/issues/397">#397</a>) was
+          closed on 2026-10-07 after a check under real volume: the read path is
+          sound and the symptom does not reproduce. The sub-linear counts that
+          prompted it reflect bursty emission, each producer re-asserting its
+          inventory on its own cycle, not loss.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.21.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.21.0">release</a>,
+          each with a checksum, and the multi-architecture container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>
+          as <code>v0.21.0</code> and <code>latest</code>.
+          See the <a href="/docs/0.21.0/">0.21.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
