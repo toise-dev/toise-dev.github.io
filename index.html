@@ -1478,19 +1478,40 @@ query {
               </p>
             </li>
             <li class="tl">
-              <div class="tl-when">Integration &amp; stability <span class="tag">now</span></div>
+              <div class="tl-when">Integration &amp; stability <span class="tag">done</span></div>
               <p>
                 Operator annotations (a <code>get_entity</code> overlay and the
                 first GraphQL mutation), MCP resources and prompts, read-only and
-                ingest-only token roles, a conformance CLI plus a producer
-                directory, and a pinned, documented API surface.
+                ingest-only token roles, response verbosity tiers, a conformance
+                CLI plus a producer directory, and a pinned, documented API surface.
+              </p>
+            </li>
+            <li class="tl">
+              <div class="tl-when">Connection topology <span class="tag">done</span></div>
+              <p>
+                Who depends on whom: a producer asserts a durable
+                <code>depends_on</code> edge to an observable network endpoint,
+                and the graph resolves it to the remote listener at read time,
+                never writing the join back. The same graph answers "what does
+                this service depend on?" and "who connects to it?".
+              </p>
+            </li>
+            <li class="tl">
+              <div class="tl-when">Producer ecosystem &amp; stabilisation <span class="tag">now</span></div>
+              <p>
+                More OpenTelemetry producers emitting entity events across host,
+                network, virtualization, directory and cloud inventory sources,
+                and an API and data model stabilised toward 1.0 by what real
+                deployments exercise.
               </p>
             </li>
             <li class="tl">
               <div class="tl-when">Toward 1.0 <span class="tag">next</span></div>
               <p>
-                A broader ecosystem of OpenTelemetry producers, more API
-                stabilisation, and a release candidate.
+                A release candidate once the public surfaces (the wire contract,
+                GraphQL, the MCP tools, resources and prompts) have settled across
+                real deployments, plus the hardening and operability work that
+                production use surfaces.
               </p>
             </li>
             <li class="tl">
