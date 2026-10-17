@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.22.0 — no more answers it would not give</title>
+    <meta
+      name="description"
+      content="Toise 0.22.0 stops holding answers it would not give: an impossible cadence is refused and the refusal is visible, a past-instant read no longer borrows today's provenance, lost edges are counted, and two entity types and two join keys arrive. Upgrades in place from 0.21."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.22.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.22.0 — no more answers it would not give" />
+    <meta
+      property="og:description"
+      content="Every fix here has one shape: Toise knew something and the surface did not carry it. None was found by reading the code; each came from someone measuring."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.22.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      .notice {
+        border-left: 3px solid var(--accent);
+        background: #f1e9dc;
+        border-radius: 0 7px 7px 0;
+        padding: 12px 16px;
+        margin: 24px 0;
+      }
+      .notice p {
+        margin: 6px 0;
+      }
+      .notice code {
+        background: var(--bg);
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+          <a href="/blog/">Blog</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.22.0 — no more answers it would not give</h1>
+        <p class="meta">2026-10-17</p>
+
+        <p class="lead">
+          Every fix in this release has one shape: Toise knew something and the
+          surface did not carry it. An impossible cadence recited as a bound. A
+          provenance field that meant two different things. Forty-seven thousand
+          lost edges with no trace. A join key offered for twice the cases it
+          covers.
+        </p>
+        <p>
+          None of them was found by reading the code. Each came from someone
+          measuring: an operator searching logs, a consumer running a fixture, a
+          producer reading its own emitter. In four cases the measurement refuted
+          something the maintainer had asserted. Several prereleases were cut for
+          this release, and more than one was refused on the test bench; the
+          refusals are summarised at the end, because they are the reason the
+          stable is trustworthy.
+        </p>
+
+        <div class="notice">
+          <p><strong>One answer changes shape for consumers.</strong></p>
+          <p>
+            A read at a past instant (<code>as_of</code>) no longer fills the live
+            provenance fields from the present. Who asserts an entity, and how often
+            it is observed, are live state; replaying the log does not rebuild
+            them. Those fields are now withheld on a past-instant read, with a
+            sentence saying what that costs and how to get the answer. Nothing
+            changes on a live read, and no field is removed; the tool contract gains
+            one optional field. A 0.21 deployment upgrades in place.
+          </p>
+        </div>
+
+        <h2>An impossible promise is refused, and the refusal shows</h2>
+        <p>
+          A liveness interval is not an observed fact. It is a promise to speak
+          again, and a producer can promise something impossible. One did: a
+          malformed interval gave a host a 153-year bound, and that host sat in a
+          production graph for eight weeks, immortal, while the read surface quoted
+          the figure back as a legitimate cadence. Nothing marked it as a defect.
+        </p>
+        <p>
+          The promise is now refused; the entity is kept, because an interval is
+          not a fact and ADR 0022 stands. "No cadence" has two causes that must not
+          read alike, nobody promised one or somebody promised an impossible one,
+          so <code>observation_interval</code> now distinguishes <code>unknown</code>
+          from <code>none</code>. And the refusal survives a restart: the first cut
+          guarded live observations only, so a snapshot holding the impossible
+          interval restored it intact, which is exactly how that host survived
+          restarts for 56 days. The stored absolute deadline falls with the promise
+          too; refusing the interval alone would have left a deadline armed in the
+          year 2177.
+        </p>
+        <p>
+          A counter now records every refused promise, by producer and entity
+          type, with the largest refused value kept as a gauge. The magnitude is the
+          diagnosis: a few times the bound is a misconfiguration, a thousand times
+          over is a unit error.
+        </p>
+
+        <h2>A past-instant read no longer borrows the present</h2>
+        <p>
+          The withholding described in the notice above had been designed,
+          documented in four schema texts, and never wired. Both guards tested for a
+          condition that is never true on an <code>as_of</code> read, so the
+          contract stated the intent and the code answered from the present: a
+          past-instant answer named the producers asserting the entity today beside
+          its state then. That is a false attribution, not an approximation, and it
+          is the worst shape of the defect this release corrects. Every other one
+          was an absence that failed to declare itself, and an absence at least
+          leaves a reader looking. A false value stops them.
+        </p>
+        <p>
+          Two null fields and no explanation cannot tell withheld from
+          unanswerable, so a withheld field carries a sentence naming what it costs
+          and how to get the answer. GraphQL keeps the defect for now, by decision,
+          and its schema says so: a field resolver receives only its object and
+          cannot know the query named an instant. No known consumer selects those
+          fields on an <code>asOf</code> query today.
+        </p>
+
+        <h2>Lost edges are counted</h2>
+        <p>
+          An edge whose endpoints have not arrived parks until they do, and a parked
+          edge can be discarded: two expiries, and a third path that needs no clock
+          at all, eviction of the oldest entry when the buffer is full. Forty-seven
+          thousand edges had been lost on one deployment with no trace beyond a
+          warning line in a flood of them. A counter now records discarded edges,
+          labelled by relation type and by the type at each end. The three labels
+          are what makes the figure diagnose itself: one value named a producer's
+          shape and a missing emitter at once, where the relation type alone would
+          only have said that an edge was lost.
+        </p>
+        <p>
+          The counter covered the two expiries and missed the eviction, so it read
+          zero under the one condition that loses edges fastest: a burst, which is
+          also when an operator is least able to pick a warning out of the log.
+          Found because the bench asked what input makes an edge drop and could not
+          make the counter move. A later prerelease found that both new counters
+          were installed after boot had opened every persisted tenant, so only a
+          tenant created after boot ever counted; both are now installed before the
+          receiver accepts an observation.
+        </p>
+
+        <h2>Two entity types, two join keys</h2>
+        <p>
+          <code>host.service</code> is a unit the system's supervisor manages: a
+          systemd unit on Linux, a Windows service on Windows. One type, because it
+          is one concept. Its identity is the host and the full name the
+          supervisor gives, since <code>nginx.service</code> and
+          <code>nginx.socket</code> are two different units and a bare
+          <code>nginx</code> fuses them into one entity whose attributes oscillate.
+          Nothing upstream covers this ground yet, so the spelling is an extension
+          of the OpenTelemetry <code>host.*</code> namespace and it is
+          <strong>proposed</strong>, not settled: it may change when an upstream
+          experience report lands. Choosing an upstream-owned namespace over a
+          private one is deliberate; a private prefix has no collision risk and
+          guarantees a re-key the day the vocabularies converge.
+        </p>
+        <p>
+          <code>k8s.node</code> is the cluster's view of a machine, keyed on the
+          node UID and carrying the role in the cluster rather than facts about the
+          machine. A node cordoned while its host is perfectly healthy is what makes
+          the two distinct.
+        </p>
+        <p>
+          <code>host.service.name</code> joins a service to its telemetry.
+          <code>service.endpoint</code> does too, but <strong>conditionally</strong>:
+          only a listener that an active check targets has a series carrying it,
+          and offering it to every listener would be a partial false promise, one
+          that works often enough to be trusted and then returns an empty filter.
+          The graph holds the fact that decides, so <code>telemetry_keys</code>
+          withholds the key where it cannot work instead of offering it everywhere
+          with a caveat to read.
+        </p>
+
+        <h2>Also in this release</h2>
+        <ul>
+          <li>
+            An embedded edge now inherits its speaker's interval and deadline on
+            the source.
+            It used to carry a deadline that never lapses, which was sound while an
+            entity's death was the only way its last asserter could vanish, and
+            broken once a shared entity stopped dying when one speaker withdrew.
+            Measured: an edge held by a producer that had explicitly declared its
+            source gone, for as long as the endpoints lived. It now lives exactly as
+            long as that speaker's claim on the source, and the interval is what
+            bounds the survival to one cycle.
+          </li>
+          <li>
+            An empty <code>asserted_by</code> now says when something asserts the
+            entity anonymously. A producer that sends no identity is deliberately
+            not named, so the list read empty while the entity was actively
+            refreshed, with nobody to ask. A production host sat in that state for
+            eight weeks, reading as an entity nobody wanted.
+          </li>
+          <li>
+            The GraphQL schema consumers actually read was stale: the served copy
+            is the one embedded in generated code, and documentation fixes already
+            merged had reached nobody. Descriptions only, no field and no
+            behaviour. One of them had creation described as "the entity did not
+            exist before this event", the inverse of the contract: the graph is
+            exactly as complete as its producers, so absence is never evidence of
+            absence.
+          </li>
+          <li>
+            Documentation: a relation whose two halves have different emitters is
+            now specified, with the three relations in that situation named in a
+            table; <code>rekeyed</code> enters the delete reasons for a migration
+            where nothing happened to the thing and only its spelling changed. The
+            reason says why the entity disappeared; it does not link the old entity
+            to the new one, and nothing in the graph does. And a
+            page explains how to tell a real commit from a restore artefact.
+          </li>
+        </ul>
+
+        <h2>Upgrading</h2>
+        <p>
+          Nothing to do: the data directory is read in place and the log sequence
+          continues. The change to past-instant reads is additive for every
+          consumer, since no field is removed. If you consume
+          <code>telemetry_keys</code> for listeners, expect
+          <code>service.endpoint</code> only where it can work.
+        </p>
+
+        <h2>Known, open, and stated rather than omitted</h2>
+        <ul>
+          <li>
+            An entity nobody asserts cannot be removed by anyone
+            (<a href="https://github.com/toise-dev/toise/issues/511">#511</a>): the
+            read surface only annotates, and the only destructive command drops a
+            whole tenant.
+          </li>
+          <li>
+            An empty <code>asserted_by</code> still means two different things
+            (<a href="https://github.com/toise-dev/toise/issues/507">#507</a>); the
+            sentence above flags the anonymous case, and the list itself is the
+            same in both.
+          </li>
+          <li>
+            A speaker's explicit delete of a shared entity does not release its
+            references on the relations it declared at once
+            (<a href="https://github.com/toise-dev/toise/issues/504">#504</a>); the
+            inherited deadline bounds it to one interval.
+          </li>
+          <li>
+            <code>From</code> and <code>To</code> in the relation registry are read
+            by nothing (<a href="https://github.com/toise-dev/toise/issues/494">#494</a>),
+            <code>commit_seq</code> does not survive a restore
+            (<a href="https://github.com/toise-dev/toise/issues/496">#496</a>), and a
+            replica that receives only a shipped log has a complete projection,
+            empty provenance and no liveness, with no answer saying so
+            (<a href="https://github.com/toise-dev/toise/issues/493">#493</a>).
+          </li>
+        </ul>
+
+        <h2>What the prereleases refused</h2>
+        <p>
+          The stable supersedes several betas, and each was replaced because the
+          qualification itself found a gap: a cadence refused live but restored
+          intact; an edge held for ever by a speaker that had declared its source
+          gone; a counter that could not move under the condition that loses edges
+          fastest; a past-instant read answering from the present; and finally two
+          counters that could not fire on any tenant that existed at boot. None of
+          that was found by reading a diff. A test bench that can make an instrument
+          move, or fail to, is what turned these into fixes rather than release
+          notes.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.22.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.22.0">release</a>,
+          each with a checksum, and the multi-architecture container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.22.0/">0.22.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
