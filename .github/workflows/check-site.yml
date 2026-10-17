@@ -1,0 +1,29 @@
+name: Check site
+
+# The docs tree under /docs is written by the Toise release workflow and is
+# skipped by the checker, so a docs deploy on main never fails this job.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python3 -m unittest scripts/test_check_site.py
+      - name: Check pages, posts, index and sitemap
+        run: python3 scripts/check-site.py
+      - name: Blog index and sitemap are up to date
+        run: |
+          python3 scripts/build-blog-index.py
+          git diff --exit-code -- blog/index.html sitemap.xml
