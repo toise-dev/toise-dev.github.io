@@ -13,7 +13,11 @@ Served via GitHub Pages, deployed automatically on push to `main`.
    `<p class="meta">`, the `og:description`, and the Blog link in the header.
 2. Run `python3 scripts/build-blog-index.py` from the repository root. It
    rebuilds the list in `blog/index.html` and adds the post to `sitemap.xml`.
-3. Open a pull request against `main`.
+3. Run `python3 scripts/check-site.py`. It checks every page outside `docs/`
+   for broken internal links, absolute self-links, missing title or viewport,
+   and every post for its metadata and its presence in the index and sitemap.
+   Its tests run with `python3 -m unittest scripts/test_check_site.py`.
+4. Open a pull request against `main`.
 
 The homepage Blog link points to `/blog/`, so it does not change per release.
 
