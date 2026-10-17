@@ -321,13 +321,15 @@
         <h2>Also in this release</h2>
         <ul>
           <li>
-            An embedded edge now inherits its speaker's deadline on the source.
+            An embedded edge now inherits its speaker's interval and deadline on
+            the source.
             It used to carry a deadline that never lapses, which was sound while an
             entity's death was the only way its last asserter could vanish, and
             broken once a shared entity stopped dying when one speaker withdrew.
             Measured: an edge held by a producer that had explicitly declared its
             source gone, for as long as the endpoints lived. It now lives exactly as
-            long as that speaker's claim on the source.
+            long as that speaker's claim on the source, and the interval is what
+            bounds the survival to one cycle.
           </li>
           <li>
             An empty <code>asserted_by</code> now says when something asserts the
@@ -349,7 +351,9 @@
             Documentation: a relation whose two halves have different emitters is
             now specified, with the three relations in that situation named in a
             table; <code>rekeyed</code> enters the delete reasons for a migration
-            where nothing happened to the thing and only its spelling changed; and a
+            where nothing happened to the thing and only its spelling changed. The
+            reason says why the entity disappeared; it does not link the old entity
+            to the new one, and nothing in the graph does. And a
             page explains how to tell a real commit from a restore artefact.
           </li>
         </ul>
