@@ -1434,12 +1434,16 @@ query {
               </p>
             </div>
             <div>
-              <h3>Stable identity through change</h3>
+              <h3>An identity you can carry</h3>
               <p>
-                An entity keeps one logical identity even when its identifying
-                attributes change — a renamed host stays the same host on its
-                timeline. A content hash handles lookup and idempotency, so
-                re-observations never fork the graph.
+                An entity is its identifying attributes, nothing else. A renamed
+                host stays the same host, because a name is descriptive; a change
+                to an identifying key is a different entity, and nothing links the
+                old one to the new unless a producer says so. Every replica
+                computes the same <code>identity_fingerprint</code> from those
+                attributes: that is the handle to store and to carry between
+                calls. The local id is a detail, re-minted after fifteen minutes
+                of silence.
               </p>
             </div>
           </div>
