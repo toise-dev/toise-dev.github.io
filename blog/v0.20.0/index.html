@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcing Toise 0.20.0 — twenty advisories closed, nothing unreachable</title>
+    <meta
+      name="description"
+      content="Toise 0.20.0 closes twenty security advisories reachable from its own code, which every earlier binary carries, and makes the list tools page so that no entity is unreachable. Changes name the collector that observed them and the commit that groups them. Upgrades in place from 0.19."
+    />
+    <link rel="canonical" href="https://toise.dev/blog/v0.20.0/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Toise" />
+    <meta property="og:title" content="Announcing Toise 0.20.0 — twenty advisories closed, nothing unreachable" />
+    <meta
+      property="og:description"
+      content="Every binary before this one was compiled against a standard library with known advisories: upgrade rather than wait. And a read surface can now enumerate everything it holds."
+    />
+    <meta property="og:url" content="https://toise.dev/blog/v0.20.0/" />
+    <meta name="twitter:card" content="summary" />
+    <style>
+      /* ---- Palette: "old map" — cream paper, anthracite ink, terracotta accent ---- */
+      :root {
+        --bg: #faf7f2;
+        --ink: #1a1a1a;
+        --muted: #6b6259;
+        --accent: #b8593d;
+        --accent-dark: #9c4631;
+        --line: #e6ddd0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+      }
+      header,
+      footer {
+        border-color: var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      header .logo {
+        height: 26px;
+        display: block;
+      }
+      header nav a,
+      footer nav a {
+        margin-left: 20px;
+        color: var(--ink);
+      }
+      article {
+        padding: 40px 0 8px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 8px;
+      }
+      h1 {
+        font-size: 33px;
+        line-height: 1.2;
+        margin: 0 0 8px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 34px 0 10px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      .lead {
+        font-size: 19px;
+      }
+      .notice {
+        border-left: 3px solid var(--accent);
+        background: #f1e9dc;
+        border-radius: 0 7px 7px 0;
+        padding: 12px 16px;
+        margin: 24px 0;
+      }
+      .notice p {
+        margin: 6px 0;
+      }
+      .notice code {
+        background: var(--bg);
+      }
+      code {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        background: #f1e9dc;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 14px 16px;
+        overflow: auto;
+      }
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 34px 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 24px 0 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .copy {
+        max-width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a href="/" aria-label="Toise home"><img class="logo" src="/logo-full.svg" alt="Toise" /></a>
+        <nav aria-label="Primary">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+          <a href="/blog/">Blog</a>
+        </nav>
+      </header>
+
+      <article>
+        <p class="eyebrow">Release</p>
+        <p class="eyebrow">Release</p>
+        <h1>Announcing Toise 0.20.0 — twenty advisories closed, nothing unreachable</h1>
+        <p class="meta">Released 2026-10-12 · written up 2026-10-17</p>
+
+        <p class="lead">
+          Two headlines. Every binary published before this one was compiled
+          against a standard library with known advisories, so this is an upgrade
+          rather than a choice. And a tenant holding 236 entities of one type could
+          retrieve 200 of them, with no sequence of calls that reached the other 36;
+          the list tools now page.
+        </p>
+        <p>
+          The rest came from three consumers reading production and one producer
+          reading its own code. Several items below exist because someone measured
+          something that had been asserted, and two planned items were withdrawn
+          the same way.
+        </p>
+
+        <div class="notice">
+          <p><strong>Upgrade rather than wait.</strong></p>
+          <p>
+            Twenty vulnerabilities reachable from Toise's own call paths were
+            reported by <code>govulncheck</code>: six in <code>net/http</code>,
+            three in <code>html/template</code>, others in the standard library of
+            the Go version earlier releases were built with, five in
+            <code>golang.org/x/net</code> and two in <code>google.golang.org/grpc</code>.
+            One of the grpc advisories is a server panic on a missing
+            <code>authority</code> or <code>Host</code> header, reachable through the
+            OTLP ingest receiver, which is the one surface a stranger can reach.
+            The exposure is in the artefacts already deployed, not in a future
+            build. This release is built on Go 1.26.9 and both modules report zero
+            reachable vulnerabilities. Otherwise it is drop-in: no wire-contract
+            break, no data migration.
+          </p>
+        </div>
+
+        <h2>Nothing is unreachable any more</h2>
+        <p>
+          <code>find_entities</code> and <code>get_neighbors</code> take
+          <code>after</code> and return <code>next_cursor</code>, with a sentence
+          beside the truncation flag saying what was withheld. Measured on a live
+          tenant: <code>describe_schema</code> reported 236 network endpoints and
+          <code>find_entities</code> could return 200. That type carries no
+          attributes by design, so there was not even a filter to slice on. An
+          answer declared what it was withholding and offered no way to obtain it.
+        </p>
+        <p>
+          Pages are ordered by <code>identity_fingerprint</code>, which every
+          replica computes identically and which re-minting does not move, so a
+          page sequence survives a failover. Neighbours order by depth first, so the
+          closest still come first. It is not an offset: over a live projection an
+          offset silently skips and repeats. The first cut sorted by recomputing
+          each fingerprint inside the comparator and the bench gate caught it, at
+          twelve times the time and far more allocations; the ordering keys are now
+          read from the projection's index and only the page is materialised. Against
+          the pre-paging baseline, time is at parity and memory is down by half.
+        </p>
+
+        <h2>A change says who observed it, and which commit it belongs to</h2>
+        <p>
+          The producer contract puts provenance on the instrumentation scope, one
+          per collection method, and no read surface could reach it. "Which of my
+          collectors is losing its entities" was unanswerable: on one deployment,
+          1312 liveness expirations in twelve hours with no way to attribute them.
+          Every change event now carries <code>scope</code>, on both surfaces, and
+          <code>recent_changes</code> filters on it. On a liveness expiry the scope
+          names the collector that stopped speaking, remembered on the liveness
+          reference and read back when it lapses, because Toise authors that event.
+        </p>
+        <p>
+          In the same spirit, an entity now lists <code>collected_by</code> beside
+          <code>asserted_by</code>: who sends it, and how it was gathered. An entity
+          seen by two collection methods of one agent is a different situation from
+          one seen by one method from two agents, and the two were
+          indistinguishable.
+        </p>
+        <p>
+          Every change event also carries <code>commit_seq</code>. The events of one
+          producer observation share it, and events from different commits do not. A
+          gateway change is deliberately a route deleted plus a route created, and
+          the engine committed both in one durable append while telling no one, so
+          every consumer re-invented the pairing with its own tolerance window. Pair
+          on equality now, with no window. Toise still does not say what the pairing
+          means: that a route moved is the consumer's conclusion, not the engine's.
+          The field is absent on events written before it existed, where absence
+          means unknown rather than a commit of its own.
+        </p>
+        <p>
+          Two more things a reader of the change feed needed. <code>match</code> on
+          <code>recent_changes</code> filters by attribute as the event recorded it,
+          not as the live graph holds it, so an entity that died mid-window still
+          matches on the attribute it died with. And a change page now declares its
+          order and whether it holds the newest or the oldest event: the two change
+          pages run in opposite directions while sharing one type, and a reader who
+          took the last edge of a generous history page believed they held the newest
+          event while holding one days old.
+        </p>
+
+        <h2>GraphQL stops being a mute source</h2>
+        <p>
+          <code>graphScope</code> now reports freshness, read from the journal as the
+          moment a producer last spoke rather than the moment the projection was
+          rebuilt, and accepts <code>asOf</code>. <code>Entity</code> gained
+          <code>assertedBy</code> and <code>collectedBy</code>, which GraphQL had never
+          carried in any form. A source that cannot declare its own scope and
+          freshness loses an arbitration by default, and GraphQL consumers were
+          holding one. A test asserts that both surfaces report the same numbers for
+          the same question at the same instant.
+        </p>
+
+        <h2>The governance keys leave the <code>entity.*</code> namespace</h2>
+        <p>
+          The keys Toise invented for ownership, location, lifecycle and labels are
+          now <code>senhub.owner.team</code>, <code>senhub.owner.contact</code>,
+          <code>senhub.location.site</code> and its siblings,
+          <code>senhub.lifecycle.status</code>, <code>senhub.label.&lt;key&gt;</code>
+          and <code>senhub.device.role</code>. The semantic-conventions naming rule
+          is explicit that an existing OpenTelemetry namespace must not be used as a
+          prefix for application-specific keys, and <code>entity.*</code> belongs to
+          the entity-events convention. The keys that come from that convention are
+          unchanged.
+        </p>
+        <p>
+          Nothing is rejected and nothing is rewritten. These are descriptive
+          attributes, so the values already in a graph are still there and still
+          readable, and no entity is re-minted. <code>describe_schema</code> lists
+          each key's previous spelling in a <code>was</code> field, because a consumer
+          filtering over history needs the key to find as well as the key to use. A
+          producer migrates by emitting the new spelling. Done before 1.0 rather than
+          after: had upstream later defined a key with the same name and other
+          semantics, field data would have meant two things at once.
+        </p>
+
+        <h2>Also in this release</h2>
+        <ul>
+          <li>
+            In the example viewer, expanding a folded owner gives kinds, not
+            children: owner, then one node per child type with its count, then the
+            things. Past 60 of one kind, opening is refused with a line pointing at
+            the attribute filter. Measured on two deployments: 367 entities to 3
+            drawn nodes and 548 to 6, because almost all of their relations are a
+            single <code>runs_on</code>.
+          </li>
+          <li>
+            The export size cap is now documented. Producers were told to emit a
+            full snapshot as one OTLP export with no mention of the 4 MiB cap, past
+            which an export is refused whole, an instruction unreachable for a
+            large estate. Splitting is safe between entities, never within one, and
+            a partial snapshot does not read as entity deletes.
+          </li>
+          <li>
+            The vocabulary is checked against the registry. The contract and the
+            code had disagreed three times in one week; a test now fails on a
+            registered entity type that no data-model document gives an identity
+            for.
+          </li>
+          <li>
+            The CI workflows read the Go version from <code>go.mod</code> instead
+            of pinning it four times. Three said one version while the bench said
+            another: what was measured was not what was built.
+          </li>
+        </ul>
+
+        <h2>One reserve left open</h2>
+        <p>
+          One module-level advisory in <code>klauspost/compress</code> was left
+          unbumped here: it was unreachable from Toise's code, and bumping it then
+          would have meant shipping a stable that nothing had qualified. It was
+          closed in 0.21.0.
+        </p>
+
+        <hr />
+
+        <h2>Get it</h2>
+        <pre><code>go install github.com/toise-dev/toise/cmd/toise-server@v0.20.0</code></pre>
+        <p>
+          Binaries for linux and darwin (amd64 / arm64) are on the
+          <a href="https://github.com/toise-dev/toise/releases/tag/v0.20.0">release</a>,
+          each with a checksum, and the multi-architecture container image is on
+          <a href="https://github.com/toise-dev/toise/pkgs/container/toise">GHCR</a>.
+          See the <a href="/docs/0.20.0/">0.20.0 docs</a> and the
+          <a href="https://github.com/toise-dev/toise/blob/main/CHANGELOG.md">changelog</a>.
+        </p>
+      </article>
+
+      <footer>
+        <div class="copy">
+          © 2026 Toise contributors. Released under the Apache License 2.0.
+          Initiated and primarily maintained by
+          <a href="https://sensorfactory.fr">Sensor Factory</a>.
+        </div>
+        <nav aria-label="Footer">
+          <a href="https://github.com/toise-dev/toise">GitHub</a>
+          <a href="/docs/">Docs</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
